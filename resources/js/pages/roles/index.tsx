@@ -296,7 +296,7 @@ export default function RolesIndex({ roles }: Props) {
                             <DialogFooter>
                                 <Button
                                     type="button"
-                                    variant="secondary"
+                                    variant="danger"
                                     onClick={closeForm}
                                     disabled={form.processing}
                                 >
