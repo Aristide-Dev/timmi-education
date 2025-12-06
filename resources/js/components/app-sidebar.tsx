@@ -13,7 +13,7 @@ import { dashboard } from '@/routes';
 import { index as rolesIndex } from '@/routes/roles';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Shield, Users } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Shield, Users, GraduationCap } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -31,6 +31,11 @@ const mainNavItems: NavItem[] = [
         title: 'Rôles',
         href: rolesIndex(),
         icon: Shield,
+    },
+    {
+        title: 'Matières',
+        href: '/matieres',
+        icon: GraduationCap,
     },
 ];
 
