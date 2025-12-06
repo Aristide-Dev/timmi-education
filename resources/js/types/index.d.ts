@@ -27,7 +27,22 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    flash?: {
+        success?: string;
+        error?: string;
+    };
     [key: string]: unknown;
+}
+
+export interface Role {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    users?: User[];
 }
 
 export interface User {
@@ -39,5 +54,6 @@ export interface User {
     two_factor_enabled?: boolean;
     created_at: string;
     updated_at: string;
+    roles?: Role[];
     [key: string]: unknown; // This allows for additional properties...
 }
