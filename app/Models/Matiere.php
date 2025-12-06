@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Matiere extends Model
 {
@@ -31,5 +33,13 @@ class Matiere extends Model
         return [
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * The teachers (users) that belong to the matiere.
+     */
+    public function teachers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 }

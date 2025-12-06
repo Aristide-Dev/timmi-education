@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Matiere;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -114,7 +115,7 @@ class UserService
     public function getUsersWithRole(string|Role|int $role): Collection
     {
         if ($role instanceof Role) {
-            return $role->users;
+            return $role->users()->with('roles')->get();
         }
 
         $foundRole = Role::where('slug', $role)
@@ -122,7 +123,7 @@ class UserService
             ->orWhere('id', $role)
             ->first();
 
-        return $foundRole ? $foundRole->users : collect();
+        return $foundRole ? $foundRole->users()->with('roles')->get() : collect();
     }
 
     /**
@@ -131,6 +132,71 @@ class UserService
     public function verifyEmail(User $user): bool
     {
         return $user->update(['email_verified_at' => now()]);
+    }
+
+    /**
+     * Get user with matieres loaded.
+     */
+    public function getUserWithMatieres(string|int $identifier): ?User
+    {
+        return User::where('id', $identifier)
+            ->orWhere('email', $identifier)
+            ->with(['roles', 'matieres'])
+            ->first();
+    }
+
+    /**
+     * Assign matieres to a user (teacher).
+     */
+    public function assignMatieres(User $user, array $matiereIds): void
+    {
+        $user->matieres()->sync($matiereIds);
+    }
+
+    /**
+     * Add a matiere to a user (teacher).
+     */
+    public function addMatiere(User $user, string|Matiere|int $matiere): void
+    {
+        if (is_string($matiere) || is_int($matiere)) {
+            $matiere = Matiere::where('id', $matiere)
+                ->orWhere('code', $matiere)
+                ->firstOrFail();
+        }
+
+        if (! $user->matieres->contains('id', $matiere->id)) {
+            $user->matieres()->attach($matiere);
+        }
+    }
+
+    /**
+     * Remove a matiere from a user (teacher).
+     */
+    public function removeMatiere(User $user, string|Matiere|int $matiere): void
+    {
+        if (is_string($matiere) || is_int($matiere)) {
+            $matiere = Matiere::where('id', $matiere)
+                ->orWhere('code', $matiere)
+                ->firstOrFail();
+        }
+
+        $user->matieres()->detach($matiere);
+    }
+
+    /**
+     * Sync matieres for a user (teacher).
+     */
+    public function syncMatieres(User $user, array $matiereIds): void
+    {
+        $user->matieres()->sync($matiereIds);
+    }
+
+    /**
+     * Get matieres assigned to a user (teacher).
+     */
+    public function getUserMatieres(User $user): Collection
+    {
+        return $user->matieres;
     }
 }
 

@@ -20,6 +20,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    items?: NavItem[];
 }
 
 export interface SharedData {
@@ -65,5 +66,6 @@ export interface User {
     created_at: string;
     updated_at: string;
     roles?: Role[];
+    matieres?: Matiere[];
     [key: string]: unknown; // This allows for additional properties...
 }

@@ -11,9 +11,10 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as rolesIndex } from '@/routes/roles';
+import { index as usersIndex, teachers, parents, students } from '@/routes/users';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Shield, Users, GraduationCap } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Shield, Users, GraduationCap, UserCheck, UserCircle } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -24,12 +25,34 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Utilisateurs',
-        href: '/users',
+        href: '#',
         icon: Users,
+        items: [
+            {
+                title: 'Tous',
+                href: usersIndex().url,
+                icon: Users,
+            },
+            {
+                title: 'Professeurs',
+                href: teachers().url,
+                icon: GraduationCap,
+            },
+            {
+                title: 'Parents',
+                href: parents().url,
+                icon: UserCheck,
+            },
+            {
+                title: 'Élèves',
+                href: students().url,
+                icon: UserCircle,
+            },
+        ],
     },
     {
         title: 'Rôles',
-        href: rolesIndex(),
+        href: rolesIndex().url,
         icon: Shield,
     },
     {
