@@ -69,3 +69,12 @@ export interface User {
     matieres?: Matiere[];
     [key: string]: unknown; // This allows for additional properties...
 }
+
+// Re-export geographic types
+export type {
+    Region,
+    Prefecture,
+    Commune,
+    Quartier,
+    LocalisationData,
+} from './geographie';
