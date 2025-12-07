@@ -1,141 +1,191 @@
-import { Head, router, useForm } from '@inertiajs/react'
-import { useMemo } from 'react'
-import Hero from '@/components/hero'
-import WelcomeLayout from '@/layouts/welcome-layout'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Head, router, useForm } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
+import WelcomeLayout from '@/layouts/welcome-layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { search as searchTeachers } from '@/routes/teachers';
+import { create as teacherRequestsCreate } from '@/routes/teacher-requests';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Search as SearchIcon, GraduationCap } from 'lucide-react'
-import { type Matiere, type Niveau } from '@/types'
-import { search as searchTeachers } from '@/routes/teachers'
+} from '@/components/ui/select';
+import {
+  Search as SearchIcon,
+  X,
+} from 'lucide-react';
+import { type Matiere, type Niveau } from '@/types';
 import {
   getAllRegions,
   getPrefecturesForRegion,
   getCommunesForRegion,
   getQuartiersForCommune,
-} from '@/mocks'
+} from '@/mocks';
 import {
   FadeIn,
   StaggerContainer,
-} from '@/components/animations'
-import { useOptimizedAnimations } from '@/hooks/use-optimized-animations'
+  Float,
+} from '@/components/animations';
+import { useOptimizedAnimations } from '@/hooks/use-optimized-animations';
+import { PageTransition } from '@/components/animations';
 
 interface Props {
-  canRegister: boolean
-  matieres: Matiere[]
-  niveaux: Niveau[]
+  matieres: Matiere[];
+  niveaux: Niveau[];
+  filters: {
+    q?: string;
+    matiere?: string;
+    niveau?: string;
+    region?: string;
+    prefecture?: string;
+    commune?: string;
+    quartier?: string;
+  };
 }
 
-// Import des animations personnalisées
-import {
-  PageTransition,
-} from '@/components/animations'
+export default function Search({ matieres, niveaux, filters: initialFilters }: Props) {
+  const { animationVariants, prefersReducedMotion, shouldAnimate, isInView } =
+    useOptimizedAnimations();
 
-
-export default function Welcome({ matieres, niveaux }: Props) {
-  const { animationVariants, isInView } = useOptimizedAnimations()
+  // Générer les tailles aléatoires des particules une seule fois
+  const [particleSizes] = useState(() => {
+    return Array.from({ length: 5 }, () => ({
+      width: `${4 + Math.random() * 6}px`,
+      height: `${4 + Math.random() * 6}px`,
+    }));
+  });
 
   const form = useForm({
-    q: '',
-    matiere: '',
-    niveau: '',
-    region: '',
-    prefecture: '',
-    commune: '',
-    quartier: '',
-  })
+    q: initialFilters.q || '',
+    matiere: initialFilters.matiere || '',
+    niveau: initialFilters.niveau || '',
+    region: initialFilters.region || '',
+    prefecture: initialFilters.prefecture || '',
+    commune: initialFilters.commune || '',
+    quartier: initialFilters.quartier || '',
+  });
 
   // Get all regions
-  const regions = useMemo(() => getAllRegions(), [])
+  const regions = useMemo(() => getAllRegions(), []);
 
   // Check if Conakry is selected (region ID = '1')
-  const isConakry = form.data.region === '1'
+  const isConakry = form.data.region === '1';
 
   // Get prefectures based on selected region (only if not Conakry)
   const prefectures = useMemo(() => {
-    if (!form.data.region || form.data.region === 'all' || isConakry) return []
-    return getPrefecturesForRegion(form.data.region)
-  }, [form.data.region, isConakry])
+    if (!form.data.region || form.data.region === 'all' || isConakry) return [];
+    return getPrefecturesForRegion(form.data.region);
+  }, [form.data.region, isConakry]);
 
   // Get communes for Conakry
   const communes = useMemo(() => {
-    if (!isConakry) return []
-    return getCommunesForRegion('1')
-  }, [isConakry])
+    if (!isConakry) return [];
+    return getCommunesForRegion('1');
+  }, [isConakry]);
 
   // Get quartiers based on selected commune
   const quartiers = useMemo(() => {
-    if (!isConakry || !form.data.commune || form.data.commune === 'all') return []
-    return getQuartiersForCommune(form.data.commune)
-  }, [isConakry, form.data.commune])
+    if (!isConakry || !form.data.commune || form.data.commune === 'all') return [];
+    return getQuartiersForCommune(form.data.commune);
+  }, [isConakry, form.data.commune]);
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const params = new URLSearchParams()
-    if (form.data.q) params.set('q', form.data.q)
-    if (form.data.matiere && form.data.matiere !== 'all') params.set('matiere', form.data.matiere)
-    if (form.data.niveau && form.data.niveau !== 'all') params.set('niveau', form.data.niveau)
-    if (form.data.region && form.data.region !== 'all') params.set('region', form.data.region)
-    if (form.data.prefecture && form.data.prefecture !== 'all') params.set('prefecture', form.data.prefecture)
-    if (form.data.commune && form.data.commune !== 'all') params.set('commune', form.data.commune)
-    if (form.data.quartier && form.data.quartier !== 'all') params.set('quartier', form.data.quartier)
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (form.data.q) params.set('q', form.data.q);
+    if (form.data.matiere && form.data.matiere !== 'all') params.set('matiere', form.data.matiere);
+    if (form.data.niveau && form.data.niveau !== 'all') params.set('niveau', form.data.niveau);
+    if (form.data.region && form.data.region !== 'all') params.set('region', form.data.region);
+    if (form.data.prefecture && form.data.prefecture !== 'all') params.set('prefecture', form.data.prefecture);
+    if (form.data.commune && form.data.commune !== 'all') params.set('commune', form.data.commune);
+    if (form.data.quartier && form.data.quartier !== 'all') params.set('quartier', form.data.quartier);
 
-    router.visit(searchTeachers().url + `?${params.toString()}`)
-  }
+    // Redirect directly to teacher request page with search parameters
+    router.visit(teacherRequestsCreate().url + `?${params.toString()}`);
+  };
+
+  const clearFilters = () => {
+    form.reset();
+    router.get(searchTeachers().url);
+  };
+
+  const hasActiveFilters = form.data.q || form.data.matiere || form.data.niveau || form.data.region || form.data.prefecture || form.data.commune || form.data.quartier;
+
 
   return (
     <PageTransition>
-    <WelcomeLayout title='Accueil'>
-        {/* SEO géré côté serveur par SEOTools */}
-        <Head>
-            {/* Seulement les éléments spécifiques non gérés par SEOTools */}
-            {/* <link rel="preload" as="image" href="/images/heros/pregnant-woman.png" /> */}
-        </Head>
+      <WelcomeLayout title="Rechercher un professeur">
+        <Head title="Rechercher un professeur - Timmi" />
 
-        <Hero />
+        <div className="relative min-h-screen overflow-hidden">
+          {/* Hero Section avec recherche */}
+          <div className="bg-gradient-to-br from-[color:var(--primary-600)] via-[color:var(--primary-500)] to-[color:var(--accent-500)] absolute h-full w-full opacity-90"></div>
+          <section className="relative flex min-h-[60vh] items-center justify-center py-12 lg:py-20">
+            {/* Fond décoratif */}
+            <div className="absolute inset-0 border-b border-white/10 bg-gradient-to-br from-black/30 via-black/50 to-black/10 opacity-50 shadow-2xl" />
 
-        {/* Section de recherche de professeurs */}
-        <section className="relative bg-background py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            {!prefersReducedMotion && (
+              <div className="bg-noise absolute inset-0 opacity-20 mix-blend-soft-light" />
+            )}
+
+            {shouldAnimate && !prefersReducedMotion && (
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                {particleSizes.map((size, i) => (
+                  <Float
+                    key={`particle-${i}`}
+                    amplitude={15}
+                    duration={4 + i * 0.5}
+                  >
+                    <div
+                      className="absolute rounded-full bg-white/15 blur-sm"
+                      style={{
+                        top: `${20 + i * 12}%`,
+                        left: `${10 + i * 15}%`,
+                        width: size.width,
+                        height: size.height,
+                      }}
+                    />
+                  </Float>
+                ))}
+              </div>
+            )}
+
             <StaggerContainer
-              className="mx-auto max-w-4xl"
+              className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8"
               variants={animationVariants.containerVariants}
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
               staggerDelay={0.1}
             >
               <FadeIn
-                className="text-center mb-8"
+                className="mx-auto max-w-4xl space-y-8"
                 variants={animationVariants.itemVariants}
               >
-                <h2 className="text-3xl font-bold mb-4 flex items-center justify-center gap-2">
-                  <GraduationCap className="h-8 w-8 text-primary" />
-                  Trouvez votre professeur idéal
-                </h2>
-                <p className="text-muted-foreground text-lg">
-                  Recherchez parmi nos professeurs qualifiés selon vos critères
-                </p>
-              </FadeIn>
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl">
+                    Trouvez le professeur{' '}
+                    <span className="text-[color:var(--accent-300)]">idéal</span>
+                  </h1>
+                  <p className="mt-4 text-lg text-white/90">
+                    Recherchez parmi nos professeurs qualifiés selon vos critères
+                  </p>
+                </div>
 
-              <FadeIn variants={animationVariants.itemVariants}>
-                <Card className="shadow-lg">
+                {/* Formulaire de recherche */}
+                <Card className="backdrop-blur-md bg-white/95 shadow-2xl">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <SearchIcon className="h-5 w-5" />
-                      Recherche de professeurs
+                      Recherche avancée
                     </CardTitle>
                     <CardDescription>
                       Utilisez les filtres ci-dessous pour affiner votre recherche
@@ -208,10 +258,10 @@ export default function Welcome({ matieres, niveaux }: Props) {
                           <Select
                             value={form.data.region || undefined}
                             onValueChange={(value) => {
-                              form.setData('region', value === 'all' ? '' : value)
-                              form.setData('prefecture', '')
-                              form.setData('commune', '')
-                              form.setData('quartier', '')
+                              form.setData('region', value === 'all' ? '' : value);
+                              form.setData('prefecture', '');
+                              form.setData('commune', '');
+                              form.setData('quartier', '');
                             }}
                           >
                             <SelectTrigger id="region">
@@ -236,9 +286,9 @@ export default function Welcome({ matieres, niveaux }: Props) {
                             <Select
                               value={form.data.prefecture || undefined}
                               onValueChange={(value) => {
-                                form.setData('prefecture', value === 'all' ? '' : value)
-                                form.setData('commune', '')
-                                form.setData('quartier', '')
+                                form.setData('prefecture', value === 'all' ? '' : value);
+                                form.setData('commune', '');
+                                form.setData('quartier', '');
                               }}
                               disabled={!form.data.region || form.data.region === 'all'}
                             >
@@ -264,8 +314,8 @@ export default function Welcome({ matieres, niveaux }: Props) {
                               <Select
                                 value={form.data.commune || undefined}
                                 onValueChange={(value) => {
-                                  form.setData('commune', value === 'all' ? '' : value)
-                                  form.setData('quartier', '')
+                                  form.setData('commune', value === 'all' ? '' : value);
+                                  form.setData('quartier', '');
                                 }}
                               >
                                 <SelectTrigger id="commune">
@@ -307,74 +357,53 @@ export default function Welcome({ matieres, niveaux }: Props) {
                         )}
                       </div>
 
-                      <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={form.processing}
-                        size="lg"
-                      >
-                        <SearchIcon className="h-4 w-4 mr-2" />
-                        {form.processing ? 'Recherche...' : 'Rechercher un professeur'}
-                      </Button>
+                      <div className="flex gap-3">
+                        <Button
+                          type="submit"
+                          className="flex-1"
+                          disabled={form.processing}
+                        >
+                          <SearchIcon className="h-4 w-4 mr-2" />
+                          {form.processing ? 'Recherche...' : 'Rechercher'}
+                        </Button>
+                        {hasActiveFilters && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={clearFilters}
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Réinitialiser
+                          </Button>
+                        )}
+                      </div>
                     </form>
                   </CardContent>
                 </Card>
               </FadeIn>
             </StaggerContainer>
-          </div>
-        </section>
+          </section>
 
-      {/* Styles optimisés */}
-      <style>{`
-        /* Optimisation des performances avec will-change */
-        .motion-safe .animate-element {
-          will-change: transform, opacity;
-        }
+        </div>
 
-        /* Texture de grain optimisée */
-        .bg-noise {
-          background-image:
-            radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
-          background-size: 24px 24px;
-        }
-
-        /* Amélioration du contraste pour l'accessibilité */
-        @media (prefers-contrast: high) {
-          .hero-text {
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-          }
-
-          .glass-card {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-          }
-        }
-
-        /* Responsive optimisé */
-        @media (max-width: 640px) {
-          .hero-title {
-            font-size: 2.5rem;
-            line-height: 1.2;
-          }
-        }
-
-        /* Performance : Réduction des animations sur les appareils moins puissants */
-        @media (prefers-reduced-motion: reduce) {
-          * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-          }
-        }
-
-        /* Optimisation pour les écrans haute résolution */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+        {/* Styles optimisés */}
+        <style>{`
           .bg-noise {
-            background-size: 12px 12px;
+            background-image:
+              radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+            background-size: 24px 24px;
           }
-        }
-      `}</style>
+
+          @media (prefers-reduced-motion: reduce) {
+            * {
+              animation-duration: 0.01ms !important;
+              animation-iteration-count: 1 !important;
+              transition-duration: 0.01ms !important;
+            }
+          }
+        `}</style>
       </WelcomeLayout>
     </PageTransition>
-  )
+  );
 }
+

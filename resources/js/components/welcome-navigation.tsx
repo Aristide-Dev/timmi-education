@@ -1,9 +1,10 @@
 // import { dashboard, login, register, about, contact, home, apiDocumentation, pricing } from '@/routes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutDashboard, LogIn, UserPlus, Home } from 'lucide-react';
+import { LayoutDashboard, LogIn, UserPlus, Home, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { dashboard, home as welcomeHome, register } from '@/routes';
+import { search as searchTeachers } from '@/routes/teachers';
 import { login } from '@/routes';
 import AppearanceToggle from '@/components/appearance-toggle';
 
@@ -13,6 +14,7 @@ export default function WelcomeNavigation() {
 
     const navigationLinks = [
         { href: welcomeHome().url, label: 'Accueil', icon: Home },
+        { href: searchTeachers().url, label: 'Rechercher un professeur', icon: GraduationCap },
     ];
 
     // Fonction pour vérifier si un lien est actif

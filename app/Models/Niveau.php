@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Matiere extends Model
+class Niveau extends Model
 {
     use HasFactory;
 
@@ -18,7 +17,9 @@ class Matiere extends Model
      */
     protected $fillable = [
         'name',
+        'slug',
         'code',
+        'ordre',
         'description',
         'is_active',
     ];
@@ -32,25 +33,26 @@ class Matiere extends Model
     {
         return [
             'is_active' => 'boolean',
+            'ordre' => 'integer',
         ];
     }
 
     /**
-     * The teachers (users) that belong to the matiere.
+     * The users (teachers) that teach at this niveau.
      */
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'matiere_user')
-            ->withPivot('niveau_id')
+            ->withPivot('matiere_id')
             ->withTimestamps();
     }
 
     /**
-     * The niveaux at which this matiere can be taught.
+     * The matieres that can be taught at this niveau.
      */
-    public function niveaux(): BelongsToMany
+    public function matieres(): BelongsToMany
     {
-        return $this->belongsToMany(Niveau::class, 'matiere_user')
+        return $this->belongsToMany(Matiere::class, 'matiere_user')
             ->withPivot('user_id')
             ->withTimestamps();
     }

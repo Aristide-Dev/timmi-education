@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Matiere;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\MatiereService;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,8 +14,7 @@ use Inertia\Response;
 class UserController extends Controller
 {
     public function __construct(
-        protected UserService $userService,
-        protected MatiereService $matiereService
+        protected UserService $userService
     ) {
     }
 
@@ -26,7 +23,7 @@ class UserController extends Controller
      */
     public function index(Request $request): Response
     {
-        $users = $this->userService->getAllUsers();
+        $users = $this->userService->getUsersExceptTeachers();
         $roles = Role::where('is_active', true)->get();
 
         return Inertia::render('users/index', [
@@ -115,20 +112,6 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of teachers.
-     */
-    public function teachers(Request $request): Response
-    {
-        $teachers = $this->userService->getUsersWithRole('teacher');
-        $roles = Role::where('is_active', true)->get();
-
-        return Inertia::render('users/teachers', [
-            'teachers' => $teachers,
-            'roles' => $roles,
-        ]);
-    }
-
-    /**
      * Display a listing of parents.
      */
     public function parents(Request $request): Response
@@ -154,56 +137,5 @@ class UserController extends Controller
             'students' => $students,
             'roles' => $roles,
         ]);
-    }
-
-    /**
-     * Display teacher details with matieres.
-     */
-    public function showTeacher(string $id): Response
-    {
-        $teacher = $this->userService->getUserWithMatieres($id);
-
-        if (! $teacher) {
-            abort(404, 'Professeur non trouvé.');
-        }
-
-        // Check if user is a teacher
-        if (! $teacher->hasRole('teacher')) {
-            abort(404, 'Cet utilisateur n\'est pas un professeur.');
-        }
-
-        $matieres = $this->matiereService->getActiveMatieres();
-
-        return Inertia::render('users/teacher-details', [
-            'teacher' => $teacher,
-            'matieres' => $matieres,
-        ]);
-    }
-
-    /**
-     * Update teacher matieres.
-     */
-    public function updateTeacherMatieres(Request $request, string $id): RedirectResponse
-    {
-        $teacher = $this->userService->findUser($id);
-
-        if (! $teacher) {
-            abort(404, 'Professeur non trouvé.');
-        }
-
-        // Check if user is a teacher
-        if (! $teacher->hasRole('teacher')) {
-            abort(404, 'Cet utilisateur n\'est pas un professeur.');
-        }
-
-        $validated = $request->validate([
-            'matieres' => 'nullable|array',
-            'matieres.*' => 'exists:matieres,id',
-        ]);
-
-        $this->userService->syncMatieres($teacher, $validated['matieres'] ?? []);
-
-        return redirect()->route('users.teacher.show', $teacher->id)
-            ->with('success', 'Matières mises à jour avec succès.');
     }
 }

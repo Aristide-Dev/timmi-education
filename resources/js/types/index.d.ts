@@ -46,6 +46,18 @@ export interface Role {
     users?: User[];
 }
 
+export interface Niveau {
+    id: number;
+    name: string;
+    slug: string;
+    code: string;
+    ordre: number;
+    description: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Matiere {
     id: number;
     name: string;
@@ -54,6 +66,10 @@ export interface Matiere {
     is_active: boolean;
     created_at: string;
     updated_at: string;
+    pivot?: {
+        niveau_id?: number | null;
+        niveau_slug?: string | null;
+    };
 }
 
 export interface User {
@@ -67,7 +83,35 @@ export interface User {
     updated_at: string;
     roles?: Role[];
     matieres?: Matiere[];
+    pays?: string;
+    region_id?: string | null;
+    prefecture_id?: string | null;
+    commune_id?: string | null;
+    quartier_id?: string | null;
+    adresse?: string | null;
+    telephone?: string | null;
+    bio?: string | null;
     [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface TeacherRequest {
+    id: number;
+    name: string;
+    email: string;
+    phone: string | null;
+    message: string | null;
+    matiere_id: number | null;
+    niveau_id: number | null;
+    region_id: string | null;
+    prefecture_id: string | null;
+    commune_id: string | null;
+    quartier_id: string | null;
+    search_query: string | null;
+    status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+    created_at: string;
+    updated_at: string;
+    matiere?: Matiere | null;
+    niveau?: Niveau | null;
 }
 
 // Re-export geographic types

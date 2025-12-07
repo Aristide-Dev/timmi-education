@@ -25,6 +25,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'pays',
+        'region_id',
+        'prefecture_id',
+        'commune_id',
+        'quartier_id',
+        'adresse',
+        'telephone',
+        'bio',
     ];
 
     /**
@@ -58,6 +66,18 @@ class User extends Authenticatable
      */
     public function matieres(): BelongsToMany
     {
-        return $this->belongsToMany(Matiere::class)->withTimestamps();
+        return $this->belongsToMany(Matiere::class, 'matiere_user')
+            ->withPivot('niveau_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * The niveaux that the user (teacher) teaches.
+     */
+    public function niveaux(): BelongsToMany
+    {
+        return $this->belongsToMany(Niveau::class, 'matiere_user')
+            ->withPivot('matiere_id')
+            ->withTimestamps();
     }
 }

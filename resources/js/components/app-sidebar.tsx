@@ -11,10 +11,12 @@ import {
 } from '@/components/ui/sidebar';
 import { home, dashboard } from '@/routes';
 import { index as rolesIndex } from '@/routes/roles';
-import { index as usersIndex, teachers, parents, students } from '@/routes/users';
+import { index as usersIndex, parents, students } from '@/routes/users';
+import { index as teachersIndex } from '@/routes/teachers';
+import { index as adminTeacherRequestsIndex } from '@/routes/admin/teacher-requests';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Shield, Users, GraduationCap, UserCheck, UserCircle } from 'lucide-react';
+import { LayoutGrid, Shield, Users, GraduationCap, UserCheck, UserCircle, Mail } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -34,11 +36,6 @@ const mainNavItems: NavItem[] = [
                 icon: Users,
             },
             {
-                title: 'Professeurs',
-                href: teachers().url,
-                icon: GraduationCap,
-            },
-            {
                 title: 'Parents',
                 href: parents().url,
                 icon: UserCheck,
@@ -51,6 +48,11 @@ const mainNavItems: NavItem[] = [
         ],
     },
     {
+        title: 'Professeurs',
+        href: teachersIndex().url,
+        icon: GraduationCap,
+    },
+    {
         title: 'Rôles',
         href: rolesIndex().url,
         icon: Shield,
@@ -59,6 +61,11 @@ const mainNavItems: NavItem[] = [
         title: 'Matières',
         href: '/matieres',
         icon: GraduationCap,
+    },
+    {
+        title: 'Demandes de professeurs',
+        href: adminTeacherRequestsIndex().url,
+        icon: Mail,
     },
 ];
 

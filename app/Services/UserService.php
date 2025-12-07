@@ -19,6 +19,26 @@ class UserService
     }
 
     /**
+     * Get all users except teachers.
+     */
+    public function getUsersExceptTeachers(): Collection
+    {
+        $teacherRole = Role::where('slug', 'teacher')
+            ->orWhere('name', 'teacher')
+            ->first();
+
+        if (! $teacherRole) {
+            return User::with('roles')->get();
+        }
+
+        return User::with('roles')
+            ->whereDoesntHave('roles', function ($query) use ($teacherRole) {
+                $query->where('roles.id', $teacherRole->id);
+            })
+            ->get();
+    }
+
+    /**
      * Get paginated users.
      */
     public function getPaginatedUsers(int $perPage = 15)
@@ -141,16 +161,25 @@ class UserService
     {
         return User::where('id', $identifier)
             ->orWhere('email', $identifier)
-            ->with(['roles', 'matieres'])
+            ->with(['roles', 'matieres' => function ($query) {
+                $query->withPivot('niveau_id');
+            }])
             ->first();
     }
 
     /**
-     * Assign matieres to a user (teacher).
+     * Assign matieres to a user (teacher) with niveaux.
+     * 
+     * @param array $assignments Array of ['matiere_id' => int, 'niveau_id' => int|null]
      */
-    public function assignMatieres(User $user, array $matiereIds): void
+    public function assignMatieres(User $user, array $assignments): void
     {
-        $user->matieres()->sync($matiereIds);
+        $syncData = [];
+        foreach ($assignments as $assignment) {
+            $key = $assignment['matiere_id'];
+            $syncData[$key] = ['niveau_id' => $assignment['niveau_id'] ?? null];
+        }
+        $user->matieres()->sync($syncData);
     }
 
     /**
@@ -184,11 +213,24 @@ class UserService
     }
 
     /**
-     * Sync matieres for a user (teacher).
+     * Sync matieres for a user (teacher) with niveaux.
+     * 
+     * @param array $assignments Array of ['matiere_id' => int, 'niveau_id' => int|null]
      */
-    public function syncMatieres(User $user, array $matiereIds): void
+    public function syncMatieres(User $user, array $assignments): void
     {
-        $user->matieres()->sync($matiereIds);
+        $syncData = [];
+        foreach ($assignments as $assignment) {
+            if (is_array($assignment)) {
+                $matiereId = $assignment['matiere_id'] ?? $assignment['id'] ?? $assignment;
+                $niveauId = $assignment['niveau_id'] ?? null;
+                $syncData[$matiereId] = ['niveau_id' => $niveauId];
+            } else {
+                // Backward compatibility: if just an ID is passed
+                $syncData[$assignment] = ['niveau_id' => null];
+            }
+        }
+        $user->matieres()->sync($syncData);
     }
 
     /**

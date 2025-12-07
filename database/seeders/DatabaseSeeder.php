@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         // Créer les rôles d'abord
         $this->call([
             RoleSeeder::class,
+            NiveauSeeder::class,
             MatiereSeeder::class,
             UserSeeder::class,
         ]);

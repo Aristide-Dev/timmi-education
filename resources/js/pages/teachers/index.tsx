@@ -13,9 +13,10 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2, GraduationCap, Eye } from 'lucide-react';
+import { Trash2, GraduationCap, Eye, Plus, Pencil } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { teachers, destroy } from '@/routes/users';
+import { index as teachersIndex, show as teachersShow, create as teachersCreate, edit as teachersEdit } from '@/routes/teachers';
+import { destroy } from '@/routes/users';
 
 interface Props {
     teachers: User[];
@@ -24,11 +25,11 @@ interface Props {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Professeurs',
-        href: teachers().url,
+        href: teachersIndex().url,
     },
 ];
 
-export default function TeachersIndex({ teachers }: Props) {
+export default function Index({ teachers }: Props) {
     const { auth } = usePage<SharedData>().props;
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [teacherToDelete, setTeacherToDelete] = useState<User | null>(null);
@@ -82,6 +83,13 @@ export default function TeachersIndex({ teachers }: Props) {
                             Gérez les professeurs de votre établissement
                         </p>
                     </div>
+                    <Button
+                        onClick={() => router.visit(teachersCreate().url)}
+                        className="flex items-center gap-2"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Ajouter un professeur
+                    </Button>
                 </div>
 
                 {/* Tableau des professeurs */}
@@ -146,11 +154,21 @@ export default function TeachersIndex({ teachers }: Props) {
                                                             variant="ghost"
                                                             size="sm"
                                                             onClick={() =>
-                                                                router.visit(`/users/teachers/${teacher.id}`)
+                                                                router.visit(teachersShow(teacher.id).url)
                                                             }
                                                             title="Voir les détails"
                                                         >
                                                             <Eye className="size-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                router.visit(teachersEdit(teacher.id).url)
+                                                            }
+                                                            title="Modifier les informations"
+                                                        >
+                                                            <Pencil className="size-4 text-yellow-500" />
                                                         </Button>
                                                         <Button
                                                             variant="ghost"

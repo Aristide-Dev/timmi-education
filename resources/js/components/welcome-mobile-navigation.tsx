@@ -1,11 +1,12 @@
 import React from "react"
 import { MenuItem, MenuContainer } from "@/components/ui/fluid-menu"
-import { Menu as MenuIcon, X, LayoutDashboard, LogIn, UserPlus, Home } from "lucide-react"
+import { Menu as MenuIcon, X, LayoutDashboard, LogIn, UserPlus, Home, GraduationCap } from "lucide-react"
 import { usePage } from '@inertiajs/react'
 import { type SharedData } from '@/types'
 import { dashboard, home as welcomeHome } from '@/routes'
 import { register } from "@/routes"
 import { login } from "@/routes"
+import { search as searchTeachers } from '@/routes/teachers';
 
 // A fluid circular menu that elegantly expands to reveal navigation items with smooth icon transitions
 export function WelcomeMobileNavigation() {
@@ -16,6 +17,7 @@ export function WelcomeMobileNavigation() {
 
   const navigationLinks = [
     { href: welcomeHome().url, label: 'Accueil', icon: Home },
+    { href: searchTeachers().url, label: 'Rechercher un professeur', icon: GraduationCap },
 ];
 
   const isActiveLink = (href: string) => {
