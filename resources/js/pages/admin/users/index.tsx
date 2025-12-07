@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/input-error';
 import { Pencil, Trash2, Plus, Users } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-
+import { index as adminUsersIndex, destroy as adminUsersDestroy, update as adminUsersUpdate } from '@/routes/admin/users';
 interface Props {
     users: User[];
     roles: Role[];
@@ -28,7 +28,7 @@ interface Props {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Utilisateurs',
-        href: '/users',
+        href: adminUsersIndex().url,
     },
 ];
 
@@ -62,7 +62,7 @@ export default function UsersIndex({ users, roles }: Props) {
         if (userToDelete) {
             setIsDeleting(true);
             // Routes will be auto-generated, using direct URL for now
-            router.delete(`/users/${userToDelete.id}`, {
+            router.delete(adminUsersDestroy(userToDelete.uuid).url, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteDialog();
@@ -122,7 +122,7 @@ export default function UsersIndex({ users, roles }: Props) {
         e.preventDefault();
         if (editingUser) {
             // Routes will be auto-generated, using direct URL for now
-            form.put(`/users/${editingUser.id}`, {
+            form.put(adminUsersUpdate(editingUser.uuid).url, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeForm();
@@ -130,7 +130,7 @@ export default function UsersIndex({ users, roles }: Props) {
             });
         } else {
             // Routes will be auto-generated, using direct URL for now
-            form.post('/users', {
+            form.post(adminUsersIndex().url, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeForm();

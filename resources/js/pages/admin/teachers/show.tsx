@@ -31,8 +31,8 @@ import {
   Phone,
 } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { index as teachersIndex, edit as teachersEdit } from '@/routes/teachers';
-import { update as updateTeacherMatieres } from '@/routes/teachers/matieres';
+import { index as teachersIndex, edit as teachersEdit } from '@/routes/admin/teachers';
+import { update as updateTeacherMatieres } from '@/routes/admin/teachers/matieres';
 import {
   getRegionById,
   getPrefectureById,
@@ -135,7 +135,7 @@ export default function Show({ teacher, matieres, niveaux }: Props) {
           </p>
         </div>
         <Button
-          onClick={() => router.visit(teachersEdit(teacher.id).url)}
+          onClick={() => router.visit(teachersEdit(teacher.uuid).url)}
           className="flex items-center gap-2"
         >
           <Edit className="h-4 w-4" />

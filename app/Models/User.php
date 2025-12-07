@@ -33,7 +33,30 @@ class User extends Authenticatable
         'adresse',
         'telephone',
         'bio',
+        'uuid',
     ];
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if (empty($user->uuid)) {
+                $user->uuid = \Illuminate\Support\Str::uuid()->toString();
+            }
+        });
+    }
 
     /**
      * The attributes that should be hidden for serialization.

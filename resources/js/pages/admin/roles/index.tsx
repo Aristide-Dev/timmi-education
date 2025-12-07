@@ -20,7 +20,7 @@ import InputError from '@/components/input-error';
 import { Pencil, Trash2, Plus, Shield } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { index, store, update, destroy } from '@/routes/roles';
+import { index, store, update, destroy } from '@/routes/admin/roles';
 
 interface Props {
     roles: Role[];

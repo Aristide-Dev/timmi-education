@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Services\MatiereService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class MatiereController extends Controller
             ? $this->matiereService->getActiveMatieres()
             : $this->matiereService->getAllMatieres();
 
-        return Inertia::render('matieres/index', [
+        return Inertia::render('admin/matieres/index', [
             'matieres' => $matieres,
             'activeOnly' => $activeOnly,
         ]);
@@ -46,7 +47,7 @@ class MatiereController extends Controller
 
         $this->matiereService->createMatiere($validated);
 
-        return redirect()->route('matieres.index')->with('success', 'Matière créée avec succès.');
+        return redirect()->route('admin.matieres.index')->with('success', 'Matière créée avec succès.');
     }
 
     /**
@@ -60,7 +61,7 @@ class MatiereController extends Controller
             abort(404, 'Matière non trouvée.');
         }
 
-        return Inertia::render('matieres/show', [
+        return Inertia::render('admin/matieres/show', [
             'matiere' => $matiere,
         ]);
     }
@@ -85,7 +86,7 @@ class MatiereController extends Controller
 
         $this->matiereService->updateMatiere($matiere, $validated);
 
-        return redirect()->route('matieres.index')->with('success', 'Matière mise à jour avec succès.');
+        return redirect()->route('admin.matieres.index')->with('success', 'Matière mise à jour avec succès.');
     }
 
     /**
@@ -101,6 +102,6 @@ class MatiereController extends Controller
 
         $this->matiereService->deleteMatiere($matiere);
 
-        return redirect()->route('matieres.index')->with('success', 'Matière supprimée avec succès.');
+        return redirect()->route('admin.matieres.index')->with('success', 'Matière supprimée avec succès.');
     }
 }

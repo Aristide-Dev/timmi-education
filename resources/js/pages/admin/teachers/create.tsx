@@ -27,7 +27,7 @@ import {
   X,
 } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { index as teachersIndex, store as teachersStore } from '@/routes/teachers';
+import { index as teachersIndex, store as teachersStore } from '@/routes/admin/teachers';
 import {
   getAllRegions,
   getPrefecturesForRegion,

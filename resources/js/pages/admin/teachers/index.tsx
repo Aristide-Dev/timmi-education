@@ -13,41 +13,42 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, UserCircle } from 'lucide-react';
+import { Trash2, GraduationCap, Eye, Plus, Pencil } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { students, show, destroy } from '@/routes/users';
+import { index as teachersIndex, show as teachersShow, create as teachersCreate, edit as teachersEdit } from '@/routes/admin/teachers';
+import { destroy } from '@/routes/admin/users';
 
 interface Props {
-    students: User[];
+    teachers: User[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Élèves',
-        href: students().url,
+        title: 'Professeurs',
+        href: teachersIndex().url,
     },
 ];
 
-export default function StudentsIndex({ students }: Props) {
+export default function Index({ teachers }: Props) {
     const { auth } = usePage<SharedData>().props;
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [studentToDelete, setStudentToDelete] = useState<User | null>(null);
+    const [teacherToDelete, setTeacherToDelete] = useState<User | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const openDeleteDialog = (student: User) => {
-        setStudentToDelete(student);
+    const openDeleteDialog = (teacher: User) => {
+        setTeacherToDelete(teacher);
         setIsDeleteDialogOpen(true);
     };
 
     const closeDeleteDialog = () => {
-        setStudentToDelete(null);
+        setTeacherToDelete(null);
         setIsDeleteDialogOpen(false);
     };
 
     const handleDelete = () => {
-        if (studentToDelete) {
+        if (teacherToDelete) {
             setIsDeleting(true);
-            router.delete(destroy(studentToDelete.id).url, {
+            router.delete(destroy(teacherToDelete.uuid).url, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteDialog();
@@ -65,35 +66,42 @@ export default function StudentsIndex({ students }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Liste des élèves" />
+            <Head title="Liste des professeurs" />
 
             <FullscreenLoader
                 isLoading={isDeleting}
                 spinnerType="loader2"
-                message="Suppression de l'élève en cours..."
+                message="Suppression du professeur en cours..."
                 subtitle="Veuillez patienter"
             />
 
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold">Liste des élèves</h1>
+                        <h1 className="text-2xl font-semibold">Liste des professeurs</h1>
                         <p className="text-muted-foreground text-sm">
-                            Gérez les élèves de votre établissement
+                            Gérez les professeurs de votre établissement
                         </p>
                     </div>
+                    <Button
+                        onClick={() => router.visit(teachersCreate().url)}
+                        className="flex items-center gap-2"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Ajouter un professeur
+                    </Button>
                 </div>
 
-                {/* Tableau des élèves */}
+                {/* Tableau des professeurs */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Élèves ({students.length})</CardTitle>
+                        <CardTitle>Professeurs ({teachers.length})</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {students.length === 0 ? (
+                        {teachers.length === 0 ? (
                             <div className="py-8 text-center text-muted-foreground">
-                                <UserCircle className="mx-auto mb-4 size-12 opacity-50" />
-                                <p>Aucun élève trouvé</p>
+                                <GraduationCap className="mx-auto mb-4 size-12 opacity-50" />
+                                <p>Aucun professeur trouvé</p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
@@ -108,18 +116,18 @@ export default function StudentsIndex({ students }: Props) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {students.map((student) => (
-                                            <tr key={student.id} className="border-b hover:bg-muted/50">
+                                        {teachers.map((teacher) => (
+                                            <tr key={teacher.id} className="border-b hover:bg-muted/50">
                                                 <td className="px-4 py-3">
-                                                    <div className="font-medium">{student.name}</div>
+                                                    <div className="font-medium">{teacher.name}</div>
                                                 </td>
                                                 <td className="px-4 py-3">
-                                                    <div className="text-sm">{student.email}</div>
+                                                    <div className="text-sm">{teacher.email}</div>
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <div className="flex flex-wrap gap-1">
-                                                        {student.roles && student.roles.length > 0 ? (
-                                                            student.roles.map((role) => (
+                                                        {teacher.roles && teacher.roles.length > 0 ? (
+                                                            teacher.roles.map((role) => (
                                                                 <Badge key={role.id} variant="secondary">
                                                                     {role.name}
                                                                 </Badge>
@@ -133,9 +141,11 @@ export default function StudentsIndex({ students }: Props) {
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <Badge
-                                                        variant={student.email_verified_at ? 'success' : 'warning'}
+                                                        variant={
+                                                            teacher.email_verified_at ? 'success' : 'warning'
+                                                        }
                                                     >
-                                                        {student.email_verified_at ? 'Vérifié' : 'Non vérifié'}
+                                                        {teacher.email_verified_at ? 'Vérifié' : 'Non vérifié'}
                                                     </Badge>
                                                 </td>
                                                 <td className="px-4 py-3">
@@ -143,17 +153,30 @@ export default function StudentsIndex({ students }: Props) {
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => router.visit(show(student.id).url)}
+                                                            onClick={() =>
+                                                                router.visit(teachersShow(teacher.uuid).url)
+                                                            }
+                                                            title="Voir les détails"
                                                         >
-                                                            <Pencil className="size-4" />
+                                                            <Eye className="size-4" />
                                                         </Button>
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => openDeleteDialog(student)}
-                                                            disabled={student.id === auth.user.id}
+                                                            onClick={() =>
+                                                                router.visit(teachersEdit(teacher.uuid).url)
+                                                            }
+                                                            title="Modifier les informations"
+                                                        >
+                                                            <Pencil className="size-4 text-yellow-500" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => openDeleteDialog(teacher)}
+                                                            disabled={teacher.id === auth.user.id}
                                                             title={
-                                                                student.id === auth.user.id
+                                                                teacher.id === auth.user.id
                                                                     ? 'Vous ne pouvez pas supprimer votre propre compte'
                                                                     : 'Supprimer'
                                                             }
@@ -177,8 +200,8 @@ export default function StudentsIndex({ students }: Props) {
                         <DialogHeader>
                             <DialogTitle>Confirmer la suppression</DialogTitle>
                             <DialogDescription>
-                                Êtes-vous sûr de vouloir supprimer l'élève{' '}
-                                <strong>{studentToDelete?.name}</strong> ({studentToDelete?.email}) ? Cette
+                                Êtes-vous sûr de vouloir supprimer le professeur{' '}
+                                <strong>{teacherToDelete?.name}</strong> ({teacherToDelete?.email}) ? Cette
                                 action est irréversible.
                             </DialogDescription>
                         </DialogHeader>

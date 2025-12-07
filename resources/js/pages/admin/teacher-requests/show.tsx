@@ -68,7 +68,7 @@ export default function Show({ request }: Props) {
     });
 
     const handleStatusUpdate = () => {
-        form.patch(adminUpdateRequestStatus(request.id).url, {
+        form.patch(adminUpdateRequestStatus(request.uuid).url, {
             preserveScroll: true,
         });
     };

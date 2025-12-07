@@ -170,7 +170,7 @@ export default function Index({ requests, filters: initialFilters }: Props) {
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() => router.visit(adminTeacherRequestsShow(request.id).url)}
+                                                        onClick={() => router.visit(adminTeacherRequestsShow(request.uuid).url)}
                                                         className="flex items-center gap-2"
                                                     >
                                                         <Eye className="h-4 w-4" />

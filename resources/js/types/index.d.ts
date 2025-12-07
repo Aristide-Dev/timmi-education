@@ -74,6 +74,7 @@ export interface Matiere {
 
 export interface User {
     id: number;
+    uuid: string;
     name: string;
     email: string;
     avatar?: string;
@@ -96,6 +97,7 @@ export interface User {
 
 export interface TeacherRequest {
     id: number;
+    uuid: string;
     name: string;
     email: string;
     phone: string | null;

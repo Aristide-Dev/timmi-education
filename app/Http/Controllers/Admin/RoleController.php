@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Services\RoleService;
 use Illuminate\Http\RedirectResponse;
@@ -27,7 +28,7 @@ class RoleController extends Controller
             ? $this->roleService->getActiveRoles()
             : $this->roleService->getAllRoles();
 
-        return Inertia::render('roles/index', [
+        return Inertia::render('admin/roles/index', [
             'roles' => $roles,
             'activeOnly' => $activeOnly,
         ]);
@@ -47,7 +48,7 @@ class RoleController extends Controller
 
         $this->roleService->createRole($validated);
 
-        return redirect()->route('roles.index')->with('success', 'Rôle créé avec succès.');
+        return redirect()->route('admin.roles.index')->with('success', 'Rôle créé avec succès.');
     }
 
     /**
@@ -61,7 +62,7 @@ class RoleController extends Controller
             abort(404, 'Rôle non trouvé.');
         }
 
-        return Inertia::render('roles/show', [
+        return Inertia::render('admin/roles/show', [
             'role' => $role->load('users'),
         ]);
     }
@@ -86,7 +87,7 @@ class RoleController extends Controller
 
         $this->roleService->updateRole($role, $validated);
 
-        return redirect()->route('roles.index')->with('success', 'Rôle mis à jour avec succès.');
+        return redirect()->route('admin.roles.index')->with('success', 'Rôle mis à jour avec succès.');
     }
 
     /**
@@ -102,7 +103,7 @@ class RoleController extends Controller
 
         $this->roleService->deleteRole($role);
 
-        return redirect()->route('roles.index')->with('success', 'Rôle supprimé avec succès.');
+        return redirect()->route('admin.roles.index')->with('success', 'Rôle supprimé avec succès.');
     }
 
     /**
@@ -118,7 +119,7 @@ class RoleController extends Controller
 
         $this->roleService->activateRole($role);
 
-        return redirect()->route('roles.index')->with('success', 'Rôle activé avec succès.');
+        return redirect()->route('admin.roles.index')->with('success', 'Rôle activé avec succès.');
     }
 
     /**
@@ -134,6 +135,6 @@ class RoleController extends Controller
 
         $this->roleService->deactivateRole($role);
 
-        return redirect()->route('roles.index')->with('success', 'Rôle désactivé avec succès.');
+        return redirect()->route('admin.roles.index')->with('success', 'Rôle désactivé avec succès.');
     }
 }

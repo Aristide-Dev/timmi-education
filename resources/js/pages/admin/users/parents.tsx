@@ -15,7 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pencil, Trash2, Users } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { parents, show, destroy } from '@/routes/users';
+import { parents, show, destroy } from '@/routes/admin/users';
 
 interface Props {
     parents: User[];
@@ -47,7 +47,7 @@ export default function ParentsIndex({ parents }: Props) {
     const handleDelete = () => {
         if (parentToDelete) {
             setIsDeleting(true);
-            router.delete(destroy(parentToDelete.id).url, {
+            router.delete(destroy(parentToDelete.uuid).url, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteDialog();
@@ -143,7 +143,7 @@ export default function ParentsIndex({ parents }: Props) {
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => router.visit(show(parent.id).url)}
+                                                            onClick={() => router.visit(show(parent.uuid).url)}
                                                         >
                                                             <Pencil className="size-4" />
                                                         </Button>

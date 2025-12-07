@@ -30,7 +30,30 @@ class TeacherRequest extends Model
         'quartier_id',
         'search_query',
         'status',
+        'uuid',
     ];
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($request) {
+            if (empty($request->uuid)) {
+                $request->uuid = \Illuminate\Support\Str::uuid()->toString();
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.

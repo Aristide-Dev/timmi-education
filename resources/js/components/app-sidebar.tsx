@@ -10,13 +10,13 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { home, dashboard } from '@/routes';
-import { index as rolesIndex } from '@/routes/roles';
-import { index as usersIndex, parents, students } from '@/routes/users';
-import { index as teachersIndex } from '@/routes/teachers';
+import { index as adminRolesIndex } from '@/routes/admin/roles';
+import { index as adminUsersIndex, parents as adminParents, students as adminStudents } from '@/routes/admin/users';
+import { index as adminTeachersIndex } from '@/routes/admin/teachers';
 import { index as adminTeacherRequestsIndex } from '@/routes/admin/teacher-requests';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Shield, Users, GraduationCap, UserCheck, UserCircle, Mail } from 'lucide-react';
+import { LayoutGrid, Shield, Users, GraduationCap, UserCheck, UserCircle, Mail, BookOpen } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -32,35 +32,35 @@ const mainNavItems: NavItem[] = [
         items: [
             {
                 title: 'Tous',
-                href: usersIndex().url,
+                href: adminUsersIndex().url,
                 icon: Users,
             },
             {
                 title: 'Parents',
-                href: parents().url,
+                href: adminParents().url,
                 icon: UserCheck,
             },
             {
                 title: 'Élèves',
-                href: students().url,
+                href: adminStudents().url,
                 icon: UserCircle,
             },
         ],
     },
     {
         title: 'Professeurs',
-        href: teachersIndex().url,
+        href: adminTeachersIndex().url,
         icon: GraduationCap,
     },
     {
         title: 'Rôles',
-        href: rolesIndex().url,
+        href: adminRolesIndex().url,
         icon: Shield,
     },
     {
         title: 'Matières',
-        href: '/matieres',
-        icon: GraduationCap,
+        href: '/admin/matieres',
+        icon: BookOpen,
     },
     {
         title: 'Demandes de professeurs',

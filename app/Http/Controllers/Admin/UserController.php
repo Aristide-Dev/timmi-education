@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Role;
-use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class UserController extends Controller
         $users = $this->userService->getUsersExceptTeachers();
         $roles = Role::where('is_active', true)->get();
 
-        return Inertia::render('users/index', [
+        return Inertia::render('admin/users/index', [
             'users' => $users,
             'roles' => $roles,
         ]);
@@ -47,7 +47,7 @@ class UserController extends Controller
 
         $this->userService->createUser($validated);
 
-        return redirect()->route('users.index')->with('success', 'Utilisateur créé avec succès.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur créé avec succès.');
     }
 
     /**
@@ -61,7 +61,7 @@ class UserController extends Controller
             abort(404, 'Utilisateur non trouvé.');
         }
 
-        return Inertia::render('users/show', [
+        return Inertia::render('admin/users/show', [
             'user' => $user->load('roles'),
         ]);
     }
@@ -87,7 +87,7 @@ class UserController extends Controller
 
         $this->userService->updateUser($user, $validated);
 
-        return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur mis à jour avec succès.');
     }
 
     /**
@@ -103,12 +103,12 @@ class UserController extends Controller
 
         // Prevent deleting yourself
         if ($user->id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
+            return redirect()->route('admin.users.index')->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
         }
 
         $this->userService->deleteUser($user);
 
-        return redirect()->route('users.index')->with('success', 'Utilisateur supprimé avec succès.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé avec succès.');
     }
 
     /**
@@ -119,7 +119,7 @@ class UserController extends Controller
         $parents = $this->userService->getUsersWithRole('parent');
         $roles = Role::where('is_active', true)->get();
 
-        return Inertia::render('users/parents', [
+        return Inertia::render('admin/users/parents', [
             'parents' => $parents,
             'roles' => $roles,
         ]);
@@ -133,9 +133,10 @@ class UserController extends Controller
         $students = $this->userService->getUsersWithRole('student');
         $roles = Role::where('is_active', true)->get();
 
-        return Inertia::render('users/students', [
+        return Inertia::render('admin/users/students', [
             'students' => $students,
             'roles' => $roles,
         ]);
     }
 }
+

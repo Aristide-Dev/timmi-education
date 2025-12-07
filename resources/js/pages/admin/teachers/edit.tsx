@@ -27,7 +27,7 @@ import {
   X,
 } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { index as teachersIndex, show as teachersShow, update as teachersUpdate } from '@/routes/teachers';
+import { index as teachersIndex, show as teachersShow, update as teachersUpdate } from '@/routes/admin/teachers';
 import {
   getAllRegions,
   getPrefecturesForRegion,
@@ -481,7 +481,7 @@ export default function Edit({ teacher, matieres, niveaux }: Props) {
               type="button"
               variant="outline"
               disabled={isSaving}
-              onClick={() => router.visit(teachersShow(teacher.id).url)}
+              onClick={() => router.visit(teachersShow(teacher.uuid).url)}
             >
               <X className="h-4 w-4 mr-2" />
               Annuler

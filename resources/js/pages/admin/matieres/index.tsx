@@ -20,7 +20,7 @@ import InputError from '@/components/input-error';
 import { Pencil, Trash2, Plus, BookOpen } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-
+import { index as adminMatieresIndex } from '@/routes/admin/matieres';
 interface Props {
     matieres: Matiere[];
     activeOnly?: boolean;
@@ -29,7 +29,7 @@ interface Props {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Matières',
-        href: '/matieres',
+        href: adminMatieresIndex().url,
     },
 ];
 
@@ -60,7 +60,7 @@ export default function MatieresIndex({ matieres }: Props) {
     const handleDelete = () => {
         if (matiereToDelete) {
             setIsDeleting(true);
-            router.delete(`/matieres/${matiereToDelete.id}`, {
+            router.delete(adminMatieresIndex().url.replace('/index', '') + `/${matiereToDelete.id}`, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeDeleteDialog();
@@ -109,14 +109,14 @@ export default function MatieresIndex({ matieres }: Props) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (editingMatiere) {
-            form.put(`/matieres/${editingMatiere.id}`, {
+            form.put(adminMatieresIndex().url.replace('/index', '') + `/${editingMatiere.id}`, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeForm();
                 },
             });
         } else {
-            form.post('/matieres', {
+            form.post(adminMatieresIndex().url, {
                 preserveScroll: true,
                 onSuccess: () => {
                     closeForm();

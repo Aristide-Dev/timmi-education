@@ -47,11 +47,12 @@ class UserService
     }
 
     /**
-     * Find a user by ID or email.
+     * Find a user by UUID, ID or email.
      */
     public function findUser(string|int $identifier): ?User
     {
-        return User::where('id', $identifier)
+        return User::where('uuid', $identifier)
+            ->orWhere('id', $identifier)
             ->orWhere('email', $identifier)
             ->first();
     }
@@ -159,7 +160,8 @@ class UserService
      */
     public function getUserWithMatieres(string|int $identifier): ?User
     {
-        return User::where('id', $identifier)
+        return User::where('uuid', $identifier)
+            ->orWhere('id', $identifier)
             ->orWhere('email', $identifier)
             ->with(['roles', 'matieres' => function ($query) {
                 $query->withPivot('niveau_id');
