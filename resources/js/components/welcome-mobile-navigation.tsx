@@ -1,10 +1,9 @@
 import React from "react"
 import { MenuItem, MenuContainer } from "@/components/ui/fluid-menu"
-import { Menu as MenuIcon, X, LayoutDashboard, LogIn, UserPlus, Home, GraduationCap } from "lucide-react"
+import { Menu as MenuIcon, X, LayoutDashboard, LogIn, Home, GraduationCap } from "lucide-react"
 import { usePage } from '@inertiajs/react'
 import { type SharedData } from '@/types'
 import { dashboard, home as welcomeHome } from '@/routes'
-import { register } from "@/routes"
 import { login } from "@/routes"
 import { search as searchTeachers } from '@/routes/teachers';
 
@@ -34,7 +33,7 @@ export function WelcomeMobileNavigation() {
     const authItems = auth?.user
       ? [{ href: dashboard().url, label: 'Dashboard', icon: LayoutDashboard }]
       : [
-          { href: register().url, label: 'Inscription', icon: UserPlus },
+        //   { href: register().url, label: 'Inscription', icon: UserPlus },
           { href: login().url, label: 'Connexion', icon: LogIn }
         ]
 

@@ -1,9 +1,9 @@
 // import { dashboard, login, register, about, contact, home, apiDocumentation, pricing } from '@/routes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutDashboard, LogIn, UserPlus, Home, GraduationCap } from 'lucide-react';
+import { LayoutDashboard, LogIn, Home, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { dashboard, home as welcomeHome, register } from '@/routes';
+import { dashboard, home as welcomeHome } from '@/routes';
 import { search as searchTeachers } from '@/routes/teachers';
 import { login } from '@/routes';
 import AppearanceToggle from '@/components/appearance-toggle';
@@ -171,49 +171,6 @@ export default function WelcomeNavigation() {
                             {/* Indicateur actif */}
                             {isActiveLink(login().url) && (
                                 <span className="absolute -top-1 -right-1 h-2 w-2 bg-[color:var(--primary-500)] rounded-full animate-pulse"></span>
-                            )}
-                        </Link>
-
-                        <Link
-                            key="auth-register"
-                            href={register()}
-                            className={cn(
-                                "group relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95 text-white",
-                                isActiveLink(register().url)
-                                    ? "bg-gradient-to-r from-[color:var(--primary-500)] to-[color:var(--primary-700)] shadow-xl shadow-[color:var(--primary-500)]/30"
-                                    : "bg-gradient-to-r from-[color:var(--primary-500)] to-[color:var(--primary-700)] hover:shadow-[color:var(--primary-500)]/30"
-                            )}
-                        >
-                            {/* Overlay au hover ou actif */}
-                            <span className={cn(
-                                "absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 transition-opacity duration-300",
-                                isActiveLink(register().url)
-                                    ? "opacity-100"
-                                    : "opacity-0 group-hover:opacity-100"
-                            )}></span>
-
-                            <UserPlus className={cn(
-                                "h-4 w-4 relative z-10 transition-transform duration-300",
-                                isActiveLink(register().url)
-                                    ? "scale-110"
-                                    : "group-hover:scale-110"
-                            )} />
-                            <span className="relative z-10">S'inscrire</span>
-
-                            {/* Shine effect animé */}
-                            <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700"></span>
-
-                            {/* Pulse ring */}
-                            <span className={cn(
-                                "absolute inset-0 rounded-xl bg-[color:var(--primary-500)]/30 transition-opacity duration-300",
-                                isActiveLink(register().url)
-                                    ? "opacity-100 animate-ping"
-                                    : "opacity-0 group-hover:opacity-100 group-hover:animate-ping"
-                            )}></span>
-
-                            {/* Indicateur actif */}
-                            {isActiveLink(register().url) && (
-                                <span className="absolute -top-1 -right-1 h-2 w-2 bg-white rounded-full animate-pulse"></span>
                             )}
                         </Link>
                     </>

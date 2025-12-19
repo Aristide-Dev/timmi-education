@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import Hero from '@/components/hero'
 import WelcomeLayout from '@/layouts/welcome-layout'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+// import { Input } from '@/components/ui/input'
 import {
   Card,
   CardContent,
@@ -116,6 +116,7 @@ export default function Welcome({ matieres, niveaux }: Props) {
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
               staggerDelay={0.1}
+              id="search-teachers-card"
             >
               <FadeIn
                 className="text-center mb-8"
@@ -144,7 +145,7 @@ export default function Welcome({ matieres, niveaux }: Props) {
                   <CardContent>
                     <form onSubmit={handleSearch} className="space-y-4">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2 md:col-span-2">
+                        {/* <div className="space-y-2 md:col-span-2">
                           <label htmlFor="q" className="text-sm font-medium">
                             Recherche par nom, email ou biographie
                           </label>
@@ -155,7 +156,7 @@ export default function Welcome({ matieres, niveaux }: Props) {
                             placeholder="Nom du professeur, email..."
                             className="w-full"
                           />
-                        </div>
+                        </div> */}
 
                         <div className="space-y-2">
                           <label htmlFor="matiere" className="text-sm font-medium">

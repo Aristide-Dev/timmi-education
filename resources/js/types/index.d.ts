@@ -21,6 +21,7 @@ export interface NavItem {
     icon?: LucideIcon | null;
     isActive?: boolean;
     items?: NavItem[];
+    roles?: string[]; // Rôles autorisés pour cet item (admin, super-admin, teacher, parent, student)
 }
 
 export interface SharedData {

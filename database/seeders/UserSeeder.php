@@ -15,10 +15,25 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Récupérer les rôles
+        $superAdminRole = Role::where('slug', 'super-admin')->first();
         $adminRole = Role::where('slug', 'admin')->first();
         $teacherRole = Role::where('slug', 'teacher')->first();
         $parentRole = Role::where('slug', 'parent')->first();
         $studentRole = Role::where('slug', 'student')->first();
+
+        // Créer un utilisateur Super Administrateur
+        if ($superAdminRole) {
+            $superAdmin = User::firstOrCreate(
+                ['email' => 'super-admin@timmi.com'],
+                [
+                    'name' => 'Super Administrateur',
+                    'password' => Hash::make('password'),
+                    'email_verified_at' => now(),
+                ]
+            );
+            $superAdmin->assignRole($superAdminRole);
+            $this->command->info('Utilisateur Super Administrateur créé : super-admin@timmi.com');
+        }
 
         // Créer un utilisateur Administrateur
         if ($adminRole) {

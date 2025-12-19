@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/react';
 import { ArrowRight, Rocket, Star, Users } from 'lucide-react';
 import { useState } from 'react';
 
@@ -19,7 +18,6 @@ import {
 
 // Import du hook d'optimisation des animations
 import { useOptimizedAnimations } from '@/hooks/use-optimized-animations';
-import { register } from '@/routes';
 
 export default function Hero() {
     // Utilisation du hook d'optimisation des animations avec options par défaut
@@ -211,14 +209,14 @@ export default function Hero() {
                                     className="group relative overflow-hidden border-0 bg-white px-8 py-4 text-lg font-semibold text-[color:var(--primary-600)] shadow-xl transition-all duration-300 hover:scale-[1.02] hover:bg-white/95 hover:shadow-2xl"
                                     asChild
                                 >
-                                    <Link href={register().url}>
+                                    <a href="#search-teachers-card">
                                         <motion.div
                                             className="flex items-center gap-3"
                                             whileHover={{ x: 2 }}
                                             transition={{ duration: 0.2 }}
                                         >
                                             <Rocket className="h-5 w-5" />
-                                            <span>Créer mon compte</span>
+                                            <span>Trouver un professeur</span>
                                             <Float amplitude={4} duration={2}>
                                                 <ArrowRight className="h-5 w-5" />
                                             </Float>
@@ -231,7 +229,7 @@ export default function Hero() {
                                             whileHover={{ x: '100%' }}
                                             transition={{ duration: 0.6 }}
                                         />
-                                    </Link>
+                                    </a>
                                 </Button>
                             </FadeIn>
 

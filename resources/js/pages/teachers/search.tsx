@@ -2,7 +2,7 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import WelcomeLayout from '@/layouts/welcome-layout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+// import { Input } from '@/components/ui/input';
 import { search as searchTeachers } from '@/routes/teachers';
 import { create as teacherRequestsCreate } from '@/routes/teacher-requests';
 import {
@@ -194,7 +194,7 @@ export default function Search({ matieres, niveaux, filters: initialFilters }: P
                   <CardContent>
                     <form onSubmit={handleSearch} className="space-y-4">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2 md:col-span-2">
+                        {/* <div className="space-y-2 md:col-span-2">
                           <label htmlFor="q" className="text-sm font-medium">
                             Recherche par nom, email ou biographie
                           </label>
@@ -205,7 +205,7 @@ export default function Search({ matieres, niveaux, filters: initialFilters }: P
                             placeholder="Nom du professeur, email..."
                             className="w-full"
                           />
-                        </div>
+                        </div> */}
 
                         <div className="space-y-2">
                           <label htmlFor="matiere" className="text-sm font-medium">
