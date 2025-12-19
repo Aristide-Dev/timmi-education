@@ -14,6 +14,10 @@ Route::get('/', function (MatiereService $matiereService) {
     ]);
 })->name('home');
 
+Route::get('/register', function () {
+    return redirect()->route('login');
+})->name('register');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
