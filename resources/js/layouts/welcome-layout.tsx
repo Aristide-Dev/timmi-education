@@ -164,18 +164,18 @@ export default function WelcomeLayout({
                                     <div className="flex flex-col gap-2">
                                         <h3 className="text-sm font-semibold text-foreground mb-2">Contact</h3>
                                         <a
-                                            href={`mailto:contact@timmi.gn`}
+                                            href={`mailto:contact@timmiguinee.com`}
                                             className="text-sm text-muted-foreground hover:text-[color:var(--primary-500)] transition-colors flex items-center gap-2"
                                         >
                                             <Mail className="h-4 w-4" />
-                                            Email
+                                            contact@timmiguinee.com
                                         </a>
                                         <a
-                                            href={`tel:+224612241704`}
+                                            href={`tel:+224623675418 `}
                                             className="text-sm text-muted-foreground hover:text-[color:var(--primary-500)] transition-colors flex items-center gap-2"
                                         >
                                             <Phone className="h-4 w-4" />
-                                            +224 612 241 704
+                                            +224 623 675 418
                                         </a>
                                     </div>
                                 </div>
