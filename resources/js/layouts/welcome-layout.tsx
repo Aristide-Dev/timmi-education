@@ -7,6 +7,7 @@ import WelcomeNavigation from '@/components/welcome-navigation';
 import { WelcomeMobileNavigation } from '@/components/welcome-mobile-navigation';
 import { Float } from '@/components/animations';
 import { home as welcomeHome } from '@/routes';
+import { FloatingWhatsApp } from 'react-floating-whatsapp'
 
 interface WelcomeLayoutProps {
     children: ReactNode;
@@ -80,6 +81,13 @@ export default function WelcomeLayout({
                 <div className="relative z-10 flex w-full items-center justify-center animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-150 lg:grow">
                     <div className="w-full max-w-5xl">
                         {children}
+                        <FloatingWhatsApp
+                            accountName="TIMMI GUINEE"
+                            phoneNumber="+224623675418"
+                            avatar="/apple-touch-icon.png"
+                            statusMessage="Répond Generalement en 1 heure"
+                            chatMessage="Salut! Comment pouvons-nous vous aider ?"
+                        />
                     </div>
                 </div>
 

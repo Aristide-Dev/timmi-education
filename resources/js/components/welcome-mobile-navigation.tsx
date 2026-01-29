@@ -41,7 +41,7 @@ export function WelcomeMobileNavigation() {
   }, [auth?.user])
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999]">
+    <div className="fixed bottom-6 left-6 z-[9999]">
       <div className="absolute inset-0 bg-gradient-to-b from-[color:var(--primary-900)]/80 via-[color:var(--primary-800)]/60 to-[color:var(--primary-700)]/70 blur-3xl -z-10 rounded-full" />
       <MenuContainer>
         <MenuItem
