@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Head, Link } from '@inertiajs/react';
-import { Heart, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Heart, Phone, Mail, Facebook } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import React from 'react';
 import WelcomeNavigation from '@/components/welcome-navigation';
@@ -189,7 +189,7 @@ export default function WelcomeLayout({
                                     </p>
                                     <div className="flex items-center gap-4">
                                         <a
-                                            href="https://facebook.com"
+                                            href="https://www.facebook.com/profile.php?id=61583650817827"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-muted-foreground hover:text-[color:var(--primary-500)] transition-colors"
@@ -198,31 +198,13 @@ export default function WelcomeLayout({
                                             <Facebook className="h-5 w-5" />
                                         </a>
                                         <a
-                                            href="https://twitter.com"
+                                            href="https://www.tiktok.com/@timmi.education"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-muted-foreground hover:text-[color:var(--primary-500)] transition-colors"
-                                            aria-label="Twitter"
+                                            aria-label="Tiktok"
                                         >
-                                            <Twitter className="h-5 w-5" />
-                                        </a>
-                                        <a
-                                            href="https://instagram.com"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-muted-foreground hover:text-[color:var(--primary-500)] transition-colors"
-                                            aria-label="Instagram"
-                                        >
-                                            <Instagram className="h-5 w-5" />
-                                        </a>
-                                        <a
-                                            href="https://linkedin.com"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-muted-foreground hover:text-[color:var(--primary-500)] transition-colors"
-                                            aria-label="LinkedIn"
-                                        >
-                                            <Linkedin className="h-5 w-5" />
+                                            <img src="/img/tiktok.svg" alt="Tiktok" className="h-5 w-5" />
                                         </a>
                                     </div>
                                 </div>
