@@ -21,15 +21,19 @@ class MatiereController extends Controller
      */
     public function index(Request $request): Response
     {
-        $activeOnly = $request->boolean('active_only', false);
+        $search = $request->string('search')->trim()->toString() ?: null;
+        $activeOnly = $request->has('active_only')
+            ? $request->boolean('active_only')
+            : null;
 
-        $matieres = $activeOnly
-            ? $this->matiereService->getActiveMatieres()
-            : $this->matiereService->getAllMatieres();
+        $matieres = $this->matiereService->getFilteredMatieres($search, $activeOnly);
 
         return Inertia::render('admin/matieres/index', [
             'matieres' => $matieres,
-            'activeOnly' => $activeOnly,
+            'filters' => [
+                'search' => $search,
+                'active_only' => $activeOnly === null ? null : ($activeOnly ? '1' : '0'),
+            ],
         ]);
     }
 

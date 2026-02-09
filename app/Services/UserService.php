@@ -148,6 +148,68 @@ class UserService
     }
 
     /**
+     * Get teachers with optional search and email_verified filter.
+     *
+     * @param  array{search?: string, email_verified?: string}  $filters
+     */
+    public function getTeachersFiltered(array $filters = []): Collection
+    {
+        $teacherRole = Role::where('slug', 'teacher')->orWhere('name', 'teacher')->first();
+        if (! $teacherRole) {
+            return collect();
+        }
+
+        $query = User::with('roles')
+            ->whereHas('roles', fn ($q) => $q->where('roles.id', $teacherRole->id));
+
+        if (! empty($filters['search'])) {
+            $term = '%'.addcslashes($filters['search'], '%_').'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', $term)->orWhere('email', 'like', $term);
+            });
+        }
+
+        if (isset($filters['email_verified'])) {
+            if ($filters['email_verified'] === '1') {
+                $query->whereNotNull('email_verified_at');
+            } elseif ($filters['email_verified'] === '0') {
+                $query->whereNull('email_verified_at');
+            }
+        }
+
+        return $query->orderBy('name')->get();
+    }
+
+    /**
+     * Get users except teachers with optional search and role filter.
+     *
+     * @param  array{search?: string, role?: string}  $filters
+     */
+    public function getUsersExceptTeachersFiltered(array $filters = []): Collection
+    {
+        $teacherRole = Role::where('slug', 'teacher')->orWhere('name', 'teacher')->first();
+        if (! $teacherRole) {
+            $query = User::with('roles')->newQuery();
+        } else {
+            $query = User::with('roles')
+                ->whereDoesntHave('roles', fn ($q) => $q->where('roles.id', $teacherRole->id));
+        }
+
+        if (! empty($filters['search'])) {
+            $term = '%'.addcslashes($filters['search'], '%_').'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', $term)->orWhere('email', 'like', $term);
+            });
+        }
+
+        if (! empty($filters['role'])) {
+            $query->whereHas('roles', fn ($q) => $q->where('roles.id', (int) $filters['role']));
+        }
+
+        return $query->orderBy('name')->get();
+    }
+
+    /**
      * Verify user email.
      */
     public function verifyEmail(User $user): bool

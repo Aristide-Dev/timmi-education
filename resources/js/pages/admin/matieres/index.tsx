@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { AdminListFilters, type FilterConfig } from '@/components/admin-list-filters';
 import {
     Dialog,
     DialogContent,
@@ -23,7 +24,10 @@ import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
 import { index as adminMatieresIndex } from '@/routes/admin/matieres';
 interface Props {
     matieres: Matiere[];
-    activeOnly?: boolean;
+    filters: {
+        search?: string;
+        active_only?: string | null;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -33,7 +37,21 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function MatieresIndex({ matieres }: Props) {
+const matieresFilterConfig: FilterConfig[] = [
+    { type: 'search', name: 'search', placeholder: 'Rechercher par nom, code ou description…' },
+    {
+        type: 'select',
+        name: 'active_only',
+        label: 'Statut',
+        placeholder: 'Tous',
+        options: [
+            { value: '1', label: 'Actifs uniquement' },
+            { value: '0', label: 'Inactifs uniquement' },
+        ],
+    },
+];
+
+export default function MatieresIndex({ matieres, filters }: Props) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
     const [matiereToDelete, setMatiereToDelete] = useState<Matiere | null>(null);
@@ -145,7 +163,7 @@ export default function MatieresIndex({ matieres }: Props) {
             />
 
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold">Gestion des matières</h1>
                         <p className="text-muted-foreground text-sm">
@@ -158,10 +176,19 @@ export default function MatieresIndex({ matieres }: Props) {
                     </Button>
                 </div>
 
+                <AdminListFilters
+                    baseUrl={adminMatieresIndex().url}
+                    filters={{
+                        search: filters.search,
+                        active_only: filters.active_only ?? undefined,
+                    }}
+                    config={matieresFilterConfig}
+                />
+
                 {/* Tableau des matières */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Liste des matières</CardTitle>
+                        <CardTitle>Liste des matières ({matieres.length})</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {matieres.length === 0 ? (

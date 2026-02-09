@@ -4,6 +4,7 @@ import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { AdminListFilters, type FilterConfig } from '@/components/admin-list-filters';
 import {
     Dialog,
     DialogContent,
@@ -20,7 +21,25 @@ import { destroy } from '@/routes/admin/users';
 
 interface Props {
     teachers: User[];
+    filters: {
+        search?: string;
+        email_verified?: string;
+    };
 }
+
+const teachersFilterConfig: FilterConfig[] = [
+    { type: 'search', name: 'search', placeholder: 'Rechercher par nom ou email…' },
+    {
+        type: 'select',
+        name: 'email_verified',
+        label: 'Email vérifié',
+        placeholder: 'Tous',
+        options: [
+            { value: '1', label: 'Vérifié' },
+            { value: '0', label: 'Non vérifié' },
+        ],
+    },
+];
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,7 +48,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Index({ teachers }: Props) {
+export default function Index({ teachers, filters }: Props) {
     const { auth } = usePage<SharedData>().props;
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [teacherToDelete, setTeacherToDelete] = useState<User | null>(null);
@@ -76,7 +95,7 @@ export default function Index({ teachers }: Props) {
             />
 
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold">Liste des professeurs</h1>
                         <p className="text-muted-foreground text-sm">
@@ -91,6 +110,15 @@ export default function Index({ teachers }: Props) {
                         Ajouter un professeur
                     </Button>
                 </div>
+
+                <AdminListFilters
+                    baseUrl={teachersIndex().url}
+                    filters={{
+                        search: filters.search,
+                        email_verified: filters.email_verified,
+                    }}
+                    config={teachersFilterConfig}
+                />
 
                 {/* Tableau des professeurs */}
                 <Card>

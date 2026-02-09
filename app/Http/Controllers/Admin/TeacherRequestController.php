@@ -25,6 +25,7 @@ class TeacherRequestController extends Controller
     public function index(Request $request): Response
     {
         $status = $request->get('status');
+        $search = $request->string('search')->trim()->toString() ?: null;
 
         $query = TeacherRequest::with(['matiere', 'niveau'])->orderBy('created_at', 'desc');
 
@@ -32,11 +33,21 @@ class TeacherRequestController extends Controller
             $query->where('status', $status);
         }
 
+        if ($search) {
+            $term = '%'.addcslashes($search, '%_').'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', $term)
+                    ->orWhere('email', 'like', $term)
+                    ->orWhere('phone', 'like', $term);
+            });
+        }
+
         $requests = $query->get();
 
         return Inertia::render('admin/teacher-requests/index', [
             'requests' => $requests,
             'filters' => [
+                'search' => $search,
                 'status' => $status,
             ],
         ]);

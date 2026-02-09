@@ -1,12 +1,13 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type Role, type SharedData, type User } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { AdminListFilters, type FilterConfig } from '@/components/admin-list-filters';
 import {
     Dialog,
     DialogContent,
@@ -23,6 +24,10 @@ import { index as adminUsersIndex, destroy as adminUsersDestroy, update as admin
 interface Props {
     users: User[];
     roles: Role[];
+    filters: {
+        search?: string;
+        role?: string;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -32,7 +37,20 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function UsersIndex({ users, roles }: Props) {
+export default function UsersIndex({ users, roles, filters }: Props) {
+    const usersFilterConfig: FilterConfig[] = useMemo(
+        () => [
+            { type: 'search', name: 'search', placeholder: 'Rechercher par nom ou email…' },
+            {
+                type: 'select',
+                name: 'role',
+                label: 'Rôle',
+                placeholder: 'Tous les rôles',
+                options: roles.map((r) => ({ value: String(r.id), label: r.name })),
+            },
+        ],
+        [roles]
+    );
     const { auth } = usePage<SharedData>().props;
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
@@ -159,7 +177,7 @@ export default function UsersIndex({ users, roles }: Props) {
             />
 
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold">Gestion des utilisateurs</h1>
                         <p className="text-muted-foreground text-sm">
@@ -172,10 +190,19 @@ export default function UsersIndex({ users, roles }: Props) {
                     </Button>
                 </div>
 
+                <AdminListFilters
+                    baseUrl={adminUsersIndex().url}
+                    filters={{
+                        search: filters.search,
+                        role: filters.role,
+                    }}
+                    config={usersFilterConfig}
+                />
+
                 {/* Tableau des utilisateurs */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Liste des utilisateurs</CardTitle>
+                        <CardTitle>Liste des utilisateurs ({users.length})</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {users.length === 0 ? (

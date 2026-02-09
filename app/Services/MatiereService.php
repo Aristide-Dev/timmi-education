@@ -24,6 +24,29 @@ class MatiereService
     }
 
     /**
+     * Get matieres with optional search and active filter.
+     */
+    public function getFilteredMatieres(?string $search = null, ?bool $activeOnly = null): Collection
+    {
+        $query = Matiere::query();
+
+        if ($activeOnly !== null) {
+            $query->where('is_active', $activeOnly);
+        }
+
+        if ($search !== null && $search !== '') {
+            $term = '%'.addcslashes($search, '%_').'%';
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', $term)
+                    ->orWhere('code', 'like', $term)
+                    ->orWhere('description', 'like', $term);
+            });
+        }
+
+        return $query->orderBy('name')->get();
+    }
+
+    /**
      * Find a matiere by ID or code.
      */
     public function findMatiere(string|int $identifier): ?Matiere

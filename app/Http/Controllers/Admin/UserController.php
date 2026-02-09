@@ -23,12 +23,20 @@ class UserController extends Controller
      */
     public function index(Request $request): Response
     {
-        $users = $this->userService->getUsersExceptTeachers();
+        $filters = [
+            'search' => $request->string('search')->trim()->toString() ?: null,
+            'role' => $request->get('role'),
+        ];
+        $users = $this->userService->getUsersExceptTeachersFiltered(array_filter($filters));
         $roles = Role::where('is_active', true)->get();
 
         return Inertia::render('admin/users/index', [
             'users' => $users,
             'roles' => $roles,
+            'filters' => [
+                'search' => $filters['search'],
+                'role' => $filters['role'],
+            ],
         ]);
     }
 

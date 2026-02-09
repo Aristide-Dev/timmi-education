@@ -1,7 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type TeacherRequest } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -10,22 +9,33 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { AdminListFilters, type FilterConfig } from '@/components/admin-list-filters';
 import { Eye, Mail, Phone, Calendar, BookOpen } from 'lucide-react';
 import { index as adminTeacherRequestsIndex, show as adminTeacherRequestsShow } from '@/routes/admin/teacher-requests';
 
 interface Props {
     requests: TeacherRequest[];
     filters: {
+        search?: string;
         status?: string;
     };
 }
+
+const teacherRequestsFilterConfig: FilterConfig[] = [
+    { type: 'search', name: 'search', placeholder: 'Rechercher par nom, email ou téléphone…' },
+    {
+        type: 'select',
+        name: 'status',
+        label: 'Statut',
+        placeholder: 'Tous les statuts',
+        options: [
+            { value: 'pending', label: 'En attente' },
+            { value: 'in_progress', label: 'En cours' },
+            { value: 'completed', label: 'Terminée' },
+            { value: 'cancelled', label: 'Annulée' },
+        ],
+    },
+];
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -48,57 +58,37 @@ const statusVariants: Record<string, 'default' | 'secondary' | 'destructive' | '
     cancelled: 'danger',
 };
 
-export default function Index({ requests, filters: initialFilters }: Props) {
-    const [statusFilter, setStatusFilter] = useState(initialFilters.status || 'all');
-
-    const handleStatusFilterChange = (value: string) => {
-        setStatusFilter(value);
-        const params = new URLSearchParams();
-        if (value !== 'all') {
-            params.set('status', value);
-        }
-        router.get(adminTeacherRequestsIndex().url + (params.toString() ? `?${params.toString()}` : ''));
-    };
-
-    const filteredRequests = statusFilter === 'all' 
-        ? requests 
-        : requests.filter((r) => r.status === statusFilter);
-
+export default function Index({ requests, filters }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Demandes de professeurs" />
 
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold">Demandes de professeurs</h1>
                         <p className="text-muted-foreground text-sm">
                             Gérez les demandes de professeurs reçues
                         </p>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filtrer par statut" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Tous les statuts</SelectItem>
-                                <SelectItem value="pending">En attente</SelectItem>
-                                <SelectItem value="in_progress">En cours</SelectItem>
-                                <SelectItem value="completed">Terminée</SelectItem>
-                                <SelectItem value="cancelled">Annulée</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
                 </div>
+
+                <AdminListFilters
+                    baseUrl={adminTeacherRequestsIndex().url}
+                    filters={{
+                        search: filters.search,
+                        status: filters.status,
+                    }}
+                    config={teacherRequestsFilterConfig}
+                />
 
                 {/* Tableau des demandes */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Demandes ({filteredRequests.length})</CardTitle>
+                        <CardTitle>Demandes ({requests.length})</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {filteredRequests.length === 0 ? (
+                        {requests.length === 0 ? (
                             <div className="py-8 text-center text-muted-foreground">
                                 <Mail className="mx-auto mb-4 size-12 opacity-50" />
                                 <p>Aucune demande trouvée</p>
@@ -118,7 +108,7 @@ export default function Index({ requests, filters: initialFilters }: Props) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {filteredRequests.map((request) => (
+                                        {requests.map((request) => (
                                             <tr key={request.id} className="border-b hover:bg-muted/50">
                                                 <td className="px-4 py-3">
                                                     <div className="font-medium">{request.name}</div>

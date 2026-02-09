@@ -30,12 +30,20 @@ class TeacherController extends Controller
      */
     public function index(Request $request): Response
     {
-        $teachers = $this->userService->getUsersWithRole('teacher');
+        $filters = [
+            'search' => $request->string('search')->trim()->toString() ?: null,
+            'email_verified' => $request->get('email_verified'),
+        ];
+        $teachers = $this->userService->getTeachersFiltered(array_filter($filters));
         $roles = Role::where('is_active', true)->get();
 
         return Inertia::render('admin/teachers/index', [
             'teachers' => $teachers,
             'roles' => $roles,
+            'filters' => [
+                'search' => $filters['search'],
+                'email_verified' => $filters['email_verified'],
+            ],
         ]);
     }
 
