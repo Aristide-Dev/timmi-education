@@ -1,8 +1,7 @@
-import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
-import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
@@ -13,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
+import { Camera, User as UserIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -24,11 +24,25 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Profile({
     mustVerifyEmail,
     status,
+    updateUrl,
 }: {
     mustVerifyEmail: boolean;
     status?: string;
+    updateUrl: string;
 }) {
     const { auth } = usePage<SharedData>().props;
+
+    const form = useForm({
+        _method: 'patch',
+        name: auth.user.name,
+        email: auth.user.email,
+        photo: null as File | null,
+    });
+
+    const photoUrl = auth.user.profile_photo_url ?? auth.user.avatar ?? null;
+    const previewUrl = form.data.photo
+        ? URL.createObjectURL(form.data.photo)
+        : photoUrl;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -37,108 +51,145 @@ export default function Profile({
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
-                        title="Profile information"
-                        description="Update your name and email address"
+                        title="Informations du profil"
+                        description="Mettez à jour votre nom, email et photo de profil"
                     />
 
-                    <Form
-                        {...ProfileController.update.form()}
-                        options={{
-                            preserveScroll: true,
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            form.post(updateUrl, { preserveScroll: true });
                         }}
                         className="space-y-6"
                     >
-                        {({ processing, recentlySuccessful, errors }) => (
-                            <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
-
-                                    <Input
-                                        id="name"
-                                        className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
-                                        name="name"
-                                        required
-                                        autoComplete="name"
-                                        placeholder="Full name"
-                                    />
-
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.name}
-                                    />
+                        {/* Photo de profil */}
+                        <div className="grid gap-2">
+                            <Label>Photo de profil</Label>
+                            <div className="flex items-center gap-4">
+                                <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-muted bg-muted">
+                                    {previewUrl ? (
+                                        <img
+                                            src={previewUrl}
+                                            alt=""
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <UserIcon className="h-12 w-12 text-muted-foreground" />
+                                    )}
                                 </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
-
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        className="mt-1 block w-full"
-                                        defaultValue={auth.user.email}
-                                        name="email"
-                                        required
-                                        autoComplete="username"
-                                        placeholder="Email address"
+                                <div className="flex flex-col gap-2">
+                                    <Label
+                                        htmlFor="photo"
+                                        className="cursor-pointer"
+                                    >
+                                        <span className="flex items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background hover:bg-accent hover:text-accent-foreground">
+                                            <Camera className="h-4 w-4" />
+                                            Choisir une photo
+                                        </span>
+                                    </Label>
+                                    <input
+                                        id="photo"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/jpg,image/webp"
+                                        className="sr-only"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) form.setData('photo', file);
+                                        }}
                                     />
-
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.email}
-                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        JPG, PNG ou WebP. Max 2 Mo.
+                                    </p>
+                                    <InputError message={form.errors.photo} />
                                 </div>
+                            </div>
+                        </div>
 
-                                {mustVerifyEmail &&
-                                    auth.user.email_verified_at === null && (
-                                        <div>
-                                            <p className="-mt-4 text-sm text-muted-foreground">
-                                                Your email address is
-                                                unverified.{' '}
-                                                <Link
-                                                    href={send()}
-                                                    as="button"
-                                                    className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                                >
-                                                    Click here to resend the
-                                                    verification email.
-                                                </Link>
-                                            </p>
+                        <div className="grid gap-2">
+                            <Label htmlFor="name">Nom</Label>
+                            <Input
+                                id="name"
+                                className="mt-1 block w-full"
+                                value={form.data.name}
+                                onChange={(e) =>
+                                    form.setData('name', e.target.value)
+                                }
+                                required
+                                autoComplete="name"
+                                placeholder="Nom complet"
+                            />
+                            <InputError
+                                className="mt-2"
+                                message={form.errors.name}
+                            />
+                        </div>
 
-                                            {status ===
-                                                'verification-link-sent' && (
-                                                <div className="mt-2 text-sm font-medium text-green-600">
-                                                    A new verification link has
-                                                    been sent to your email
-                                                    address.
-                                                </div>
-                                            )}
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Adresse email</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                className="mt-1 block w-full"
+                                value={form.data.email}
+                                onChange={(e) =>
+                                    form.setData('email', e.target.value)
+                                }
+                                required
+                                autoComplete="username"
+                                placeholder="Adresse email"
+                            />
+                            <InputError
+                                className="mt-2"
+                                message={form.errors.email}
+                            />
+                        </div>
+
+                        {mustVerifyEmail &&
+                            auth.user.email_verified_at === null && (
+                                <div>
+                                    <p className="-mt-4 text-sm text-muted-foreground">
+                                        Votre adresse email n'est pas
+                                        vérifiée.{' '}
+                                        <Link
+                                            href={send()}
+                                            as="button"
+                                            className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                        >
+                                            Cliquez ici pour renvoyer l'email de
+                                            vérification.
+                                        </Link>
+                                    </p>
+                                    {status ===
+                                        'verification-link-sent' && (
+                                        <div className="mt-2 text-sm font-medium text-green-600">
+                                            Un nouveau lien de vérification a
+                                            été envoyé à votre adresse email.
                                         </div>
                                     )}
-
-                                <div className="flex items-center gap-4">
-                                    <Button
-                                        disabled={processing}
-                                        data-test="update-profile-button"
-                                    >
-                                        Save
-                                    </Button>
-
-                                    <Transition
-                                        show={recentlySuccessful}
-                                        enter="transition ease-in-out"
-                                        enterFrom="opacity-0"
-                                        leave="transition ease-in-out"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <p className="text-sm text-neutral-600">
-                                            Saved
-                                        </p>
-                                    </Transition>
                                 </div>
-                            </>
-                        )}
-                    </Form>
+                            )}
+
+                        <div className="flex items-center gap-4">
+                            <Button
+                                type="submit"
+                                disabled={form.processing}
+                                data-test="update-profile-button"
+                            >
+                                Enregistrer
+                            </Button>
+                            <Transition
+                                show={form.recentlySuccessful}
+                                enter="transition ease-in-out"
+                                enterFrom="opacity-0"
+                                leave="transition ease-in-out"
+                                leaveTo="opacity-0"
+                            >
+                                <p className="text-sm text-neutral-600">
+                                    Enregistré
+                                </p>
+                            </Transition>
+                        </div>
+                    </form>
                 </div>
 
                 <DeleteUser />

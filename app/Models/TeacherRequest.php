@@ -31,6 +31,9 @@ class TeacherRequest extends Model
         'search_query',
         'status',
         'uuid',
+        'assigned_teacher_id',
+        'requester_user_id',
+        'scheduled_at',
     ];
 
     /**
@@ -64,6 +67,7 @@ class TeacherRequest extends Model
     {
         return [
             'status' => 'string',
+            'scheduled_at' => 'datetime',
         ];
     }
 
@@ -81,5 +85,21 @@ class TeacherRequest extends Model
     public function niveau(): BelongsTo
     {
         return $this->belongsTo(Niveau::class);
+    }
+
+    /**
+     * Get the teacher assigned to this request.
+     */
+    public function assignedTeacher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_teacher_id');
+    }
+
+    /**
+     * Get the user account created for the requester (student or teacher).
+     */
+    public function requesterUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requester_user_id');
     }
 }

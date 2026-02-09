@@ -41,15 +41,14 @@ interface Props {
   niveaux: Niveau[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Professeurs',
-    href: teachersIndex().url,
-  },
-];
-
 export default function Edit({ teacher, matieres, niveaux }: Props) {
   const [isSaving, setIsSaving] = useState(false);
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Professeurs', href: teachersIndex().url },
+    { title: teacher.name, href: teachersShow.url(teacher.id) },
+    { title: 'Modifier', href: teachersEdit.url(teacher.id) },
+  ];
 
   const form = useForm({
     name: teacher.name || '',

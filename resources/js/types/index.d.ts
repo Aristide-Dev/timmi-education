@@ -79,6 +79,7 @@ export interface User {
     name: string;
     email: string;
     avatar?: string;
+    profile_photo_url?: string | null;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
     created_at: string;
@@ -111,10 +112,15 @@ export interface TeacherRequest {
     quartier_id: string | null;
     search_query: string | null;
     status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+    assigned_teacher_id: number | null;
+    requester_user_id: number | null;
+    scheduled_at: string | null;
     created_at: string;
     updated_at: string;
     matiere?: Matiere | null;
     niveau?: Niveau | null;
+    assigned_teacher?: User | null;
+    requester_user?: User | null;
 }
 
 // Re-export geographic types

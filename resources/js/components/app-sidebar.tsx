@@ -10,13 +10,15 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { home, dashboard } from '@/routes';
+import { edit as profileEdit } from '@/routes/profile';
+import { showPublic as teachersShowPublic } from '@/routes/teachers';
 import { index as adminRolesIndex } from '@/routes/admin/roles';
 import { index as adminUsersIndex, parents as adminParents, students as adminStudents } from '@/routes/admin/users';
 import { index as adminTeachersIndex } from '@/routes/admin/teachers';
 import { index as adminTeacherRequestsIndex } from '@/routes/admin/teacher-requests';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Shield, Users, GraduationCap, UserCheck, UserCircle, Mail, BookOpen } from 'lucide-react';
+import { LayoutGrid, Shield, Users, GraduationCap, UserCheck, UserCircle, Mail, BookOpen, Settings, Eye, CalendarClock, User } from 'lucide-react';
 import AppLogo from './app-logo';
 
 // Tous les items de navigation possibles
@@ -77,6 +79,12 @@ const allNavItems: NavItem[] = [
         icon: Mail,
         roles: ['admin', 'super-admin'],
     },
+    {
+        title: 'Paramètres',
+        href: profileEdit().url,
+        icon: Settings,
+        roles: ['admin', 'super-admin', 'teacher', 'parent', 'student'],
+    },
 ];
 
 /**
@@ -131,7 +139,40 @@ export function AppSidebar() {
     const userRoles = user?.roles?.map((role) => role.slug) || [];
 
     // Filtrer les items de navigation selon les rôles
-    const mainNavItems = filterNavItemsByRole(allNavItems, userRoles);
+    let mainNavItems = filterNavItemsByRole(allNavItems, userRoles);
+
+    // Espace professeur : Mon espace (profil + créneaux) et Mon profil public
+    if (user?.uuid && userRoles.includes('teacher')) {
+        mainNavItems = [
+            ...mainNavItems,
+            {
+                title: 'Mon espace',
+                href: '/teacher/profile',
+                icon: User,
+                roles: ['teacher'],
+                items: [
+                    {
+                        title: 'Mon profil',
+                        href: '/teacher/profile',
+                        icon: User,
+                        roles: ['teacher'],
+                    },
+                    {
+                        title: 'Mes créneaux',
+                        href: '/teacher/availability/edit',
+                        icon: CalendarClock,
+                        roles: ['teacher'],
+                    },
+                ],
+            },
+            {
+                title: 'Mon profil public',
+                href: teachersShowPublic(user.uuid).url,
+                icon: Eye,
+                roles: ['teacher'],
+            },
+        ];
+    }
 
     return (
         <Sidebar collapsible="icon" variant="inset">

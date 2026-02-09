@@ -119,7 +119,20 @@ export default function Index({ teachers }: Props) {
                                         {teachers.map((teacher) => (
                                             <tr key={teacher.id} className="border-b hover:bg-muted/50">
                                                 <td className="px-4 py-3">
-                                                    <div className="font-medium">{teacher.name}</div>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
+                                                            {teacher.profile_photo_url ? (
+                                                                <img
+                                                                    src={teacher.profile_photo_url}
+                                                                    alt=""
+                                                                    className="h-full w-full object-cover"
+                                                                />
+                                                            ) : (
+                                                                <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                                            )}
+                                                        </div>
+                                                        <span className="font-medium">{teacher.name}</span>
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <div className="text-sm">{teacher.email}</div>

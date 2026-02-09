@@ -4,9 +4,12 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Matiere;
+use App\Models\TeacherRequest;
 use App\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Zap\Models\Concerns\HasSchedules;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -14,7 +17,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
+    use HasFactory, HasSchedules, Notifiable, TwoFactorAuthenticatable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -33,8 +36,28 @@ class User extends Authenticatable
         'adresse',
         'telephone',
         'bio',
+        'profile_photo_path',
         'uuid',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    /**
+     * Get the profile photo URL (relative so it works on any domain).
+     */
+    public function getProfilePhotoUrlAttribute(): ?string
+    {
+        return $this->profile_photo_path
+            ? '/storage/'.$this->profile_photo_path
+            : null;
+    }
 
     /**
      * Get the route key for the model.
@@ -102,5 +125,21 @@ class User extends Authenticatable
         return $this->belongsToMany(Niveau::class, 'matiere_user')
             ->withPivot('matiere_id')
             ->withTimestamps();
+    }
+
+    /**
+     * Teacher requests assigned to this user (when user is the assigned teacher).
+     */
+    public function assignedTeacherRequests(): HasMany
+    {
+        return $this->hasMany(TeacherRequest::class, 'assigned_teacher_id');
+    }
+
+    /**
+     * Teacher requests where this user was created as the requester (student or teacher account).
+     */
+    public function requesterTeacherRequests(): HasMany
+    {
+        return $this->hasMany(TeacherRequest::class, 'requester_user_id');
     }
 }

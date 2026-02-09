@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\MatiereController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\TeacherAvailabilityController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\TeacherRequestController;
 use App\Http\Controllers\Admin\UserController;
@@ -51,6 +52,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::put('/{id}', [TeacherController::class, 'update'])->name('update');
         Route::patch('/{id}', [TeacherController::class, 'update'])->name('update.patch');
         Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+        Route::get('/{id}/availability/edit', [TeacherAvailabilityController::class, 'edit'])->name('availability.edit');
+        Route::put('/{id}/availability', [TeacherAvailabilityController::class, 'update'])->name('availability.update');
         Route::put('/{id}/matieres', [TeacherController::class, 'updateMatieres'])->name('matieres.update');
         Route::delete('/{id}', [TeacherController::class, 'destroy'])->name('destroy');
     });
@@ -60,5 +63,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::get('/', [TeacherRequestController::class, 'index'])->name('index');
         Route::get('/{id}', [TeacherRequestController::class, 'show'])->name('show');
         Route::patch('/{id}/status', [TeacherRequestController::class, 'updateStatus'])->name('updateStatus');
+        Route::patch('/{id}/assign', [TeacherRequestController::class, 'assign'])->name('assign');
     });
 });

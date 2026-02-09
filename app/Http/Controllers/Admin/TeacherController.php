@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Niveau;
 use App\Models\Role;
 use App\Services\MatiereService;
+use App\Services\TeacherAvailabilityService;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,7 +18,8 @@ class TeacherController extends Controller
 {
     public function __construct(
         protected UserService $userService,
-        protected MatiereService $matiereService
+        protected MatiereService $matiereService,
+        protected TeacherAvailabilityService $availabilityService
     ) {
     }
 
@@ -193,11 +195,13 @@ class TeacherController extends Controller
 
         $matieres = $this->matiereService->getActiveMatieres();
         $niveaux = Niveau::where('is_active', true)->orderBy('ordre')->get();
+        $availability = $this->availabilityService->getAvailability($teacher);
 
         return Inertia::render('admin/teachers/show', [
             'teacher' => $teacher,
             'matieres' => $matieres,
             'niveaux' => $niveaux,
+            'availability' => $availability,
         ]);
     }
 

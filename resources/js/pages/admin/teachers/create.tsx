@@ -27,7 +27,11 @@ import {
   X,
 } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { index as teachersIndex, store as teachersStore } from '@/routes/admin/teachers';
+import {
+  index as teachersIndex,
+  create as teachersCreate,
+  store as teachersStore,
+} from '@/routes/admin/teachers';
 import {
   getAllRegions,
   getPrefecturesForRegion,
@@ -40,15 +44,13 @@ interface Props {
   niveaux: Niveau[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Professeurs',
-    href: teachersIndex().url,
-  },
-];
-
 export default function Create({ matieres, niveaux }: Props) {
   const [isSaving, setIsSaving] = useState(false);
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Professeurs', href: teachersIndex().url },
+    { title: 'Créer', href: teachersCreate.url() },
+  ];
 
   const form = useForm({
     name: '',

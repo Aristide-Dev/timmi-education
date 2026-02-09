@@ -62,8 +62,16 @@ export default function ShowPublic({ teacher, niveaux }: Props) {
           {/* En-tête */}
           <div className="mb-8 text-center">
             <div className="flex justify-center mb-4">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-                <GraduationCap className="h-10 w-10 text-primary" />
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-primary/20 bg-primary/10">
+                {teacher.profile_photo_url ? (
+                  <img
+                    src={teacher.profile_photo_url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <GraduationCap className="h-12 w-12 text-primary" />
+                )}
               </div>
             </div>
             <h1 className="text-4xl font-bold mb-2">{teacher.name}</h1>
