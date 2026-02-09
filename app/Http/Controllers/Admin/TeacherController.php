@@ -10,7 +10,9 @@ use App\Services\TeacherAvailabilityService;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -59,7 +61,7 @@ class TeacherController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => ['required', 'string', Password::default(), 'confirmed'],
+            'password' => ['required', 'string', PasswordRule::default(), 'confirmed'],
             'pays' => 'nullable|string|max:255',
             'region_id' => 'nullable|string|max:255',
             'prefecture_id' => 'nullable|string|max:255',
@@ -152,7 +154,7 @@ class TeacherController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255|unique:users,email,'.$teacher->id,
-            'password' => ['nullable', 'string', Password::default(), 'confirmed'],
+            'password' => ['nullable', 'string', PasswordRule::default(), 'confirmed'],
             'pays' => 'nullable|string|max:255',
             'region_id' => 'nullable|string|max:255',
             'prefecture_id' => 'nullable|string|max:255',
@@ -239,6 +241,44 @@ class TeacherController extends Controller
 
         return redirect()->route('admin.teachers.show', $teacher->id)
             ->with('success', 'Matières mises à jour avec succès.');
+    }
+
+    /**
+     * Send welcome email with password reset link (when email is not verified).
+     */
+    public function sendWelcomeWithPasswordReset(string $id): RedirectResponse
+    {
+        $teacher = $this->userService->findUser($id);
+
+        if (! $teacher) {
+            abort(404, 'Professeur non trouvé.');
+        }
+
+        if (! $teacher->hasRole('teacher')) {
+            abort(404, 'Cet utilisateur n\'est pas un professeur.');
+        }
+
+        if ($teacher->email_verified_at) {
+            return redirect()->route('admin.teachers.show', $teacher->id)
+                ->with('error', 'L\'email de ce professeur est déjà vérifié.');
+        }
+
+        $token = Password::broker(config('fortify.passwords', 'users'))->createToken($teacher);
+        $passwordResetUrl = route('password.reset', [
+            'token' => $token,
+            'email' => $teacher->email,
+        ]);
+
+        Mail::send('emails.welcome', [
+            'user' => $teacher,
+            'passwordResetUrl' => $passwordResetUrl,
+        ], function ($message) use ($teacher) {
+            $message->to($teacher->email)
+                ->subject('Bienvenue sur '.config('app.name').' – Définir votre mot de passe');
+        });
+
+        return redirect()->route('admin.teachers.show', $teacher->id)
+            ->with('success', 'Email de bienvenue avec lien de réinitialisation envoyé à '.$teacher->email);
     }
 
     /**

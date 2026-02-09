@@ -41,6 +41,7 @@ import {
   X,
   Check,
   Filter,
+  Send,
 } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
 import teachersRoutes from '@/routes/admin/teachers';
@@ -76,6 +77,7 @@ const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'satu
 
 export default function Show({ teacher, matieres, niveaux, availability = {} }: Props) {
   const [isSaving, setIsSaving] = useState(false);
+  const [sendingWelcomeEmail, setSendingWelcomeEmail] = useState(false);
   const [filterText, setFilterText] = useState('');
 
   const breadcrumbs: BreadcrumbItem[] = [
@@ -251,8 +253,38 @@ export default function Show({ teacher, matieres, niveaux, availability = {} }: 
               )}
             </div>
 
-            {/* Bouton d'action */}
-            <div className="flex-shrink-0">
+            {/* Boutons d'action */}
+            <div className="flex-shrink-0 flex flex-wrap items-center gap-2">
+              {!teacher.email_verified_at && (
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="gap-2"
+                  disabled={sendingWelcomeEmail}
+                  onClick={() => {
+                    setSendingWelcomeEmail(true);
+                    router.post(
+                      `/admin/teachers/${teacher.id}/send-welcome-reset`,
+                      {},
+                      {
+                        preserveScroll: true,
+                        onFinish: () => setSendingWelcomeEmail(false),
+                      }
+                    );
+                  }}
+                >
+                  {sendingWelcomeEmail ? (
+                    <>
+                      <span className="animate-pulse">Envoi…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Envoyer email de bienvenue avec lien de réinitialisation
+                    </>
+                  )}
+                </Button>
+              )}
               <Button
                 onClick={() => router.visit(teachersEdit(teacher.uuid).url)}
                 size="lg"

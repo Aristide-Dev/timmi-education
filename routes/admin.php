@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::put('/{id}', [TeacherController::class, 'update'])->name('update');
         Route::patch('/{id}', [TeacherController::class, 'update'])->name('update.patch');
         Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+        Route::post('/{id}/send-welcome-reset', [TeacherController::class, 'sendWelcomeWithPasswordReset'])->name('sendWelcomeReset');
         Route::get('/{id}/availability/edit', [TeacherAvailabilityController::class, 'edit'])->name('availability.edit');
         Route::put('/{id}/availability', [TeacherAvailabilityController::class, 'update'])->name('availability.update');
         Route::put('/{id}/matieres', [TeacherController::class, 'updateMatieres'])->name('matieres.update');

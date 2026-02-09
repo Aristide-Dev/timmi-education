@@ -19,14 +19,13 @@
             })();
         </script>
 
-        {{-- Inline style to set the HTML background color based on our theme in app.css --}}
+        {{-- Fond aligné sur le thème Timmi Education (app.css) --}}
         <style>
             html {
-                background-color: oklch(1 0 0);
+                background-color: #ffffff;
             }
-
             html.dark {
-                background-color: oklch(0.145 0 0);
+                background-color: #0f172a;
             }
         </style>
 
