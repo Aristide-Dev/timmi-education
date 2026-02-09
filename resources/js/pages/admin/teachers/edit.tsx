@@ -27,7 +27,7 @@ import {
   X,
 } from 'lucide-react';
 import { FullscreenLoader } from '@/components/ui/fullscreen-loader';
-import { index as teachersIndex, show as teachersShow, update as teachersUpdate } from '@/routes/admin/teachers';
+import { index as teachersIndex, show as teachersShow, edit as teachersEdit, update as teachersUpdate } from '@/routes/admin/teachers';
 import {
   getAllRegions,
   getPrefecturesForRegion,
@@ -223,6 +223,7 @@ export default function Edit({ teacher, matieres, niveaux }: Props) {
                   <Input
                     id="password"
                     type="password"
+                    autoComplete="new-password"
                     value={form.data.password}
                     onChange={(e) => form.setData('password', e.target.value)}
                     minLength={8}
@@ -238,6 +239,7 @@ export default function Edit({ teacher, matieres, niveaux }: Props) {
                   <Input
                     id="password_confirmation"
                     type="password"
+                    autoComplete="new-password"
                     value={form.data.password_confirmation}
                     onChange={(e) => form.setData('password_confirmation', e.target.value)}
                     minLength={8}
